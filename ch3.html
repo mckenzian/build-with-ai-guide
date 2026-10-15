@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 3: Build, Test and Debug</title><link rel="stylesheet" href="guide.css"></head>
+<body><main class="page">
+<p class="draft">DRAFT - pending Wonder wording pass, ELC student-data check and Shawn approval</p>
+
+<header class="ch-header">
+  <span class="ch-kicker">Chapter 3 · The iteration</span>
+  <h1>Build, Test and Debug</h1>
+  <p class="lead">You've planned (Chapter 1) and you've handed out jobs (Chapter 2). Now something gets built, and something goes wrong. That's not failure. That's the normal middle of every project. This chapter is about getting through it calmly.</p>
+  <section class="goals" aria-label="Learning goals">
+    <h2>By the end of this chapter you can</h2>
+    <ul>
+      <li>Test like a troublemaker: twice, empty, weird, out of order.</li>
+      <li>Catch quiet bugs by asking "what happens the second time?"</li>
+      <li>Read an error message for what, where and when.</li>
+      <li>Fix a problem with one small change at a time, not a rewrite.</li>
+      <li>Keep saved copies so you can always go back.</li>
+    </ul>
+  </section>
+  <nav class="toc" aria-label="In this chapter"><ol>
+    <li><a href="#s31">Test like a troublemaker</a></li><li><a href="#s32">Looks right but isn't</a></li>
+    <li><a href="#s33">Reading an error</a></li><li><a href="#s34">Small experiments</a></li>
+    <li><a href="#s35">Not understanding the code, and undo</a></li><li><a href="#try">Try it</a></li>
+  </ol></nav>
+</header>
+
+<figure class="cycle">
+<svg class="cycle-svg" viewBox="0 0 360 340" role="img" aria-labelledby="loop-t loop-d"><title id="loop-t">The build loop</title><desc id="loop-d">Five steps in a circle: 1 Understand, 2 Design the smallest useful piece, 3 Build and test, 4 Observe, 5 Decide what changes, then back to Understand.</desc>
+<defs><marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--c-accent)"/></marker></defs>
+<path d="M228.0,62.2 A118,118 0 0 1 267.7,91.0" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M297.4,182.3 A118,118 0 0 1 282.2,229.0" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M204.5,285.4 A118,118 0 0 1 155.5,285.4" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M77.8,229.0 A118,118 0 0 1 62.6,182.3" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M92.3,91.0 A118,118 0 0 1 132.0,62.2" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<g class="cy-node"><rect x="124.0" y="31.0" width="112" height="42" rx="21"/><text x="180.0" y="57.0" text-anchor="middle"><tspan class="cy-n">1</tspan> Understand</text></g>
+<g class="cy-node"><rect x="236.2" y="112.5" width="112" height="42" rx="21"/><text x="292.2" y="138.5" text-anchor="middle"><tspan class="cy-n">2</tspan> Design</text></g>
+<g class="cy-node on"><rect x="193.4" y="244.5" width="112" height="42" rx="21"/><text x="249.4" y="270.5" text-anchor="middle"><tspan class="cy-n">3</tspan> Build &amp; test</text></g>
+<g class="cy-node"><rect x="54.6" y="244.5" width="112" height="42" rx="21"/><text x="110.6" y="270.5" text-anchor="middle"><tspan class="cy-n">4</tspan> Observe</text></g>
+<g class="cy-node"><rect x="11.8" y="112.5" width="112" height="42" rx="21"/><text x="67.8" y="138.5" text-anchor="middle"><tspan class="cy-n">5</tspan> Decide</text></g>
+<text x="180" y="166" text-anchor="middle" class="cy-mid">The build</text><text x="180" y="188" text-anchor="middle" class="cy-mid">loop</text></svg>
+<figcaption>The build loop. This chapter is about step 3, Build and test: getting something built, trying to break it, and fixing it one small change at a time.</figcaption>
+</figure>
+
+<h2>A real moment: points paid twice</h2>
+<div class="story">
+  <span class="callout-label">From the ALC live-class build</span>
+  <p>Students in my live-class tool already answered a question that ranked teams. I asked to turn it into a race, "Kahoot-style but much better," with points for each group. Before anything was built, the task note listed the open questions: does the race reward speed or accuracy, how do points add to group totals, does every teammate still get a turn, and what does the teacher's screen show?</p>
+  <p>I picked answers, and the AI built the game in four parts: the rules behind the scenes, the race lanes on the projector, the phone screens, and the final reveal with points and a podium. Then the reviewer bot said <strong>NO-GO</strong> on the reveal.</p>
+  <ol class="flow" aria-label="Team challenge timeline">
+    <li>Idea<small>a team race</small></li>
+    <li>Spec<small>four open questions answered</small></li>
+    <li>AI builds<small>four parts</small></li>
+    <li class="bad">Reviewer: NO-GO<small>double-click pays twice; ending early skips payout</small></li>
+    <li class="good">Controlled fix<small>pay once per student, plus a new test</small></li>
+  </ol>
+  <p>If the teacher double-clicked "Next," or two screens pressed it at once, a group could get its points <strong>twice</strong>. And if the class ended early, the payout could be skipped. The fix: points are recorded once per student and can never be paid a second time, and ending the class pays anything still owed. A new test hammers the button from many screens at once to prove it.</p>
+</div>
+<div class="callout key">
+  <span class="callout-label">Key idea</span>
+  <p>Look at the shape: <strong>idea, spec, AI builds, test finds a problem, controlled fix, new test so it never comes back.</strong> Turning a bug into a test like this is called a <dfn>regression test</dfn>: it keeps an old bug from sneaking back (A. Perry &amp; Luebbe, 2016). That's the whole chapter in one example.</p>
+</div>
+
+<h2>What you need</h2>
+<ul class="checklist">
+  <li>A free AI chat assistant, ideally one that can show a working preview of a simple web page.</li>
+  <li>A free Google Doc for your test log and saved copies.</li>
+</ul>
+
+<h2 id="s31"><span class="sec-num">3.1</span>Test like a troublemaker</h2>
+<p>The AI will usually test the "happy path": a user who clicks everything once, in order, like a perfect robot. Real people don't do that. They double-click. They press Back. They leave things blank. They use two devices at once.</p>
+<p>AI-written work can look right and still be wrong. In a Stanford study, people who used an AI coding helper wrote less secure code than people who didn't, and were more confident that their code was secure (N. Perry et al., 2023). So you need your own checks.</p>
+<h3>Try to break it</h3>
+<ul class="checklist">
+  <li>Click things twice, fast.</li>
+  <li>Leave a box empty.</li>
+  <li>Type something weird: a very long name, an emoji, a number where words go.</li>
+  <li>Do things out of order.</li>
+  <li>Stop halfway through.</li>
+  <li>Refresh the page, and do it all again.</li>
+</ul>
+<p>The points-paid-twice bug only showed up because someone asked: <em>what if the button gets pressed twice?</em></p>
+
+<h2 id="s32"><span class="sec-num">3.2</span>Looks right but isn't</h2>
+<p>The scariest bugs don't crash anything. They just quietly do the wrong thing.</p>
+<div class="story">
+  <span class="callout-label">From the ALC live-class build</span>
+  <p>The AI wrote a step that fills in each class's schedule when the app starts. On its own, it worked fine. But the reviewer bot spotted a catch: the step ran <strong>every time the app restarted</strong> and rewrote the class end times. So if a teacher fixed a class time by hand, the next restart quietly put the old time back. No error. No warning.</p>
+  <ol class="flow" aria-label="The quiet bug">
+    <li>Teacher fixes a time by hand</li>
+    <li>App restarts</li>
+    <li class="bad">Old time is back<small>no error, no warning</small></li>
+    <li class="good">Fix: only fill blanks<small>saved times stay</small></li>
+  </ol>
+</div>
+<p>Programmers have a word for a step that is safe to repeat: <dfn>idempotent</dfn>. Stripe, a payments company, builds this in so that a retried request isn't carried out twice (Stripe, n.d.).</p>
+<div class="callout">
+  <span class="callout-label">Rule of thumb</span>
+  <p>Ask: <strong>"What happens the second time?"</strong> Restart it. Refresh it. Run it again. Then check that what you saved is still there.</p>
+</div>
+
+<h2 id="s33"><span class="sec-num">3.3</span>Reading an error without panicking</h2>
+<p>Sometimes you do get an error message. It might look like gibberish. You don't need to understand all of it. Look for three things:</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Look for</th><th>What it means</th></tr></thead>
+  <tbody>
+    <tr><td><strong>What</strong></td><td>What it says went wrong, in plain-ish words like "not found" or "missing." Where to look depends on the tool. In Python, for example, the most useful line is usually the <em>last</em> one (Python Software Foundation, n.d.).</td></tr>
+    <tr><td><strong>Where</strong></td><td>Where it happened: a page name, a button, a line number.</td></tr>
+    <tr><td><strong>When</strong></td><td>What you did just before it happened.</td></tr>
+  </tbody>
+</table></div>
+<p>Then give the AI all three, plus your spec:</p>
+<p class="prompt good"><b>Good bug report</b>"I clicked Submit with the name box empty. I got this error: [paste]. My spec says empty names should show 'Please type your name.' What's wrong?"</p>
+<div class="story">
+  <span class="callout-label">From the ALC live-class build: a real error, read in plain words</span>
+  <p>While checking a change, the reviewer bot typed an absurdly huge class number (more than 19 digits long) into one of the app's web addresses. The page crashed, and the log said: <code>OverflowError</code> in <code>teacher_owns_class → game.get_class</code>.</p>
+  <p>Read it from left to right. "OverflowError" means the number was too big to store. The arrow shows the path: the permission check passed the number to the class lookup, and the lookup broke. So the new "reject huge numbers" check guarded one door (saving) but not another (the list of options). The bot tried three more huge numbers to be sure, then said exactly where the same check was needed.</p>
+</div>
+
+<h2 id="s34"><span class="sec-num">3.4</span>Small experiments, not a rewrite</h2>
+<p>When something breaks, it's tempting to say "just rewrite the whole thing." Be careful. A rewrite can throw away fixes that were already working and bring brand-new bugs. One well-known software writer called rewriting from scratch the worst mistake a software company can make (Spolsky, 2000). Small changes are also easier to undo (Fowler, 2024).</p>
+<p>Instead, <strong>isolate</strong> the problem:</p>
+<ol class="steps">
+  <li>Find the smallest action that causes it. ("It only breaks when I double-click Next.")</li>
+  <li>Change <strong>one</strong> thing.</li>
+  <li>Test again, including your earlier tests.</li>
+  <li>If it's fixed, write down why. If not, undo that change and try a different one.</li>
+</ol>
+<p>Notice the team challenge fix didn't rebuild the game. It changed one rule: points get recorded once per student. That's a controlled fix. AI researcher Andrej Karpathy works the same way with AI: in small chunks, checking each one before moving on (Y Combinator, 2025).</p>
+
+<h2 id="s35"><span class="sec-num">3.5</span>When you don't understand the code, and how to undo</h2>
+<p>You don't have to understand the code to manage it. Ask the AI to explain, in plain words:</p>
+<ul class="checklist">
+  <li>"Explain what this part does like I'm a new teammate."</li>
+  <li>"What would happen if someone clicked this twice?"</li>
+  <li>"What did you change since the last version, and why?"</li>
+</ul>
+<p>If the explanation doesn't match your spec, that's a bug, even if nothing crashes.</p>
+<h3>Keep saved copies</h3>
+<p>Sometimes an AI change just makes things worse. That's why you keep <strong>saved copies</strong> of every version that worked. If the new one is broken, you go back.</p>
+<p>You already know a tool that does this. In Google Docs, <strong>version history</strong> (open it from the "Last edit" button at the top right; you need edit access) lets you see and restore older versions (Google, n.d.). For your projects, do the same by hand: every time something works, paste it into your Doc under a heading like "Version 3: works, tested."</p>
+<ol class="flow" aria-label="Saved copies">
+  <li class="good">Version 1<small>works, tested</small></li><li>Try a change</li><li class="bad">Worse?<small>go back to Version 1</small></li><li class="good">Version 2<small>only if it passes</small></li>
+</ol>
+<p>Programmers use a tool for this kind of <strong>undo history</strong> called <dfn>version control</dfn>; the most common one is called Git (Fowler, 2024). The idea is the same as your saved copies: a record of changes, so you can go back to an earlier version later (Chacon &amp; Straub, 2014).</p>
+<div class="story">
+  <span class="callout-label">From the ALC live-class build: the change that would have undone someone else's work</span>
+  <p>I couldn't find a single time we had to roll back a change in the live-class tool; when something went wrong, the fix was a new, small change. The closest call came from one AI helper that built its change on an old copy of the project. If it had gone in, it would have quietly undone a teammate's newer work on counting participation. The reviewer bot compared it with the latest version and marked it NO-GO, and the change was rebuilt on top of the latest copy instead.</p>
+</div>
+<div class="callout">
+  <span class="callout-label">Coming up in Book 2</span>
+  <p>Your saved copies are the start of something bigger. In Book 2 we'll grow that habit into version control: a clear history of what changed, when and why. You'll learn to save a change (a <em>commit</em>), share it (<em>push</em>), and combine work from different people (<em>merge</em>) without overwriting each other. Then we'll add <strong>automatic checks</strong> that run when you share a change, so a test can catch a problem before people use the new version. One popular tool for this is GitHub Actions (GitHub, n.d.).</p>
+</div>
+<details>
+  <summary>See "only pay once" as an idea in code <span class="opt">(optional, you can skip this)</span></summary>
+  <div>
+<pre>if student has not been paid yet:
+    add points
+    mark student as paid</pre>
+  <p class="small">The check "has not been paid yet" is what stops a double-click from paying twice. You don't need this for anything in the course.</p>
+  </div>
+</details>
+
+<h2>What you must check yourself</h2>
+<ul class="checklist">
+  <li><strong>Did you try to break it?</strong> At least five troublemaker tests, including the second time.</li>
+  <li><strong>Did you re-run your old tests after the fix?</strong> A fix can break something that used to work.</li>
+  <li><strong>Do you have a saved copy of the last version that worked?</strong> Before every change.</li>
+</ul>
+
+<h2 id="try">Try it: break it, then fix it</h2>
+<p class="small">Free AI chat · about 45 minutes</p>
+<ol class="steps">
+  <li>Use your spec from Chapter 2, or this one: <em>"A page with one button that adds 1 point to a team score. It does not need logins. It works if each click adds exactly one point and the score shows on screen."</em></li>
+  <li>Ask a free AI assistant to build it with a preview.</li>
+  <li><strong>Save a copy</strong> in your Google Doc labelled "Version 1."</li>
+  <li>Test like a troublemaker. Try at least five ideas from 3.1, plus "what happens the second time?" (refresh the page). Log each test in a table like the one below.</li>
+  <li>Pick <strong>one</strong> problem. Describe it to the AI with what, where and when. Ask for a fix that changes as little as possible.</li>
+  <li>Test again, including your earlier tests. Save as "Version 2" only if it passes. If the fix made things worse, go back to Version 1 and try again.</li>
+</ol>
+<div class="table-wrap"><table>
+  <thead><tr><th>What I did</th><th>What I expected</th><th>What happened</th></tr></thead>
+  <tbody>
+    <tr><td>Clicked the button twice, fast</td><td>Score goes up by 2</td><td class="bad">Score went up by 3</td></tr>
+    <tr><td>Refreshed the page</td><td>Score stays the same</td><td class="good">Score stayed the same</td></tr>
+  </tbody>
+</table></div>
+<div class="callout">
+  <span class="callout-label">Hand-in</span>
+  <ul class="checklist"><li>Your test table</li><li>The problem you chose</li><li>Your message to the AI</li><li>Your before and after result</li></ul>
+</div>
+
+<h2>Chapter recap</h2>
+<ul>
+  <li>Expect bugs. Testing is how you find them before users do.</li>
+  <li>Test like a troublemaker: twice, empty, weird, out of order.</li>
+  <li>Ask "what happens the second time?" to catch quiet bugs.</li>
+  <li>Read errors for what, where and when.</li>
+  <li>Fix with small experiments, not a rewrite.</li>
+  <li>Keep saved copies so you can always undo.</li>
+</ul>
+<a class="next" href="ch4.html">Next up, Chapter 4: Ship safely →</a>
+
+<aside class="teacher" aria-label="Teacher box">
+  <span class="callout-label">Teacher box</span>
+  <h3>Timing</h3>
+  <p>2-3 lessons of 60-75 minutes. Lesson 1: opener, 3.1-3.2, start the exercise. Lesson 2: 3.3-3.5 and the fix cycle. Optional lesson 3: swap projects and test a partner's tool.</p>
+  <h3>Common sticking points</h3>
+  <ul>
+    <li>"I couldn't find any bugs." Have a partner test it; fresh eyes find more. Make sure they tried refreshing and double-clicking.</li>
+    <li>Students ask the AI to "fix everything," get a whole new version, and lose what worked. Insist on Version 1 being saved first.</li>
+    <li>Students skip re-running old tests after a fix. Make the test table a required hand-in.</li>
+    <li>Free preview features vary. If previews aren't available, students can paste the AI's page into a free online HTML viewer your school approves, or walk through the AI's described behaviour.</li>
+  </ul>
+  <h3>How to assess</h3>
+  <ul class="checklist">
+    <li>The test table has at least 5 varied tests, including a "second time" test.</li>
+    <li>The bug report to the AI includes what, where and when.</li>
+    <li>The fix is small and was re-tested, old tests included.</li>
+    <li>Saved copies exist and are labelled.</li>
+  </ul>
+</aside>
+
+<section class="references" aria-labelledby="refs">
+<h2 id="refs">References</h2>
+<ul>
+<li>Chacon, S., &amp; Straub, B. (2014). About version control. In <em>Pro Git</em> (2nd ed.). Apress. https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control</li>
+<li>Fowler, M. (2024, January 18). <em>Continuous integration</em>. martinfowler.com. https://martinfowler.com/articles/continuousIntegration.html</li>
+<li>GitHub. (n.d.). <em>Understanding GitHub Actions</em>. GitHub Docs. Retrieved October 15, 2026, from https://docs.github.com/en/actions/get-started/understand-github-actions</li>
+<li>Google. (n.d.). <em>Find what's changed in a file</em> [Google Docs Editors Help]. Retrieved October 15, 2026, from https://support.google.com/docs/answer/190843</li>
+<li>Perry, A., &amp; Luebbe, M. (2016). Testing for reliability. In B. Beyer, C. Jones, J. Petoff, &amp; N. R. Murphy (Eds.), <em>Site reliability engineering: How Google runs production systems</em>. O'Reilly Media; Google. https://sre.google/sre-book/testing-reliability/</li>
+<li>Perry, N., Srivastava, M., Kumar, D., &amp; Boneh, D. (2023). Do users write more insecure code with AI assistants? In <em>Proceedings of the 2023 ACM SIGSAC Conference on Computer and Communications Security</em> (pp. 2785–2799). Association for Computing Machinery. https://doi.org/10.1145/3576915.3623157</li>
+<li>Python Software Foundation. (n.d.). <em>Errors and exceptions</em>. The Python Tutorial. Retrieved October 15, 2026, from https://docs.python.org/3/tutorial/errors.html</li>
+<li>Spolsky, J. (2000, April 6). <em>Things you should never do, part I</em>. Joel on Software. https://www.joelonsoftware.com/2000/04/06/things-you-should-never-do-part-i/</li>
+<li>Stripe. (n.d.). <em>Idempotent requests</em>. Stripe API Reference. Retrieved October 15, 2026, from https://docs.stripe.com/api/idempotent_requests</li>
+<li>Y Combinator. (2025, June 18). <em>Andrej Karpathy: Software is changing (again)</em> [Video]. YouTube. https://www.youtube.com/watch?v=LCEmiRjPEtQ</li>
+</ul>
+<p class="note">Case-study facts (the team challenge, the schedule step, the huge-number error, the out-of-date change) come from the ALC live-class build, October 2026, and are not from these sources. The test-table rows above are a teaching example.</p>
+</section>
+
+</main></body></html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 5: Automate One Thing Well</title><link rel="stylesheet" href="guide.css"></head>
+<body><main class="page">
+<p class="draft">DRAFT - pending Wonder wording pass, ELC student-data check and Shawn approval</p>
+
+<header class="ch-header">
+  <span class="ch-kicker">Chapter 5 · The leverage</span>
+  <h1>Automate One Thing Well</h1>
+  <p class="lead">Once something works, it's tempting to make it run by itself. Automation can save a lot of time. It can also make a mess much faster than any human could. This chapter is about choosing <strong>one</strong> thing worth automating, and doing it well.</p>
+  <section class="goals" aria-label="Learning goals">
+    <h2>By the end of this chapter you can</h2>
+    <ul>
+      <li>Spot repeated work that's worth automating.</li>
+      <li>Describe an automation as trigger, action and outcome.</li>
+      <li>Plan for an automation that fails quietly or runs twice.</li>
+      <li>Give an automation only the access it needs.</li>
+      <li>Decide when not to automate, and keep a human approving what matters.</li>
+    </ul>
+  </section>
+  <nav class="toc" aria-label="In this chapter"><ol>
+    <li><a href="#s51">Find the repeated work</a></li><li><a href="#s52">Trigger, action, outcome</a></li>
+    <li><a href="#s53">Plan for when it fails</a></li><li><a href="#s54">Permissions</a></li>
+    <li><a href="#s55">When not to automate</a></li><li><a href="#try">Try it</a></li>
+  </ol></nav>
+</header>
+
+<figure class="cycle">
+<svg class="cycle-svg" viewBox="0 0 360 340" role="img" aria-labelledby="loop-t loop-d"><title id="loop-t">The build loop</title><desc id="loop-d">Five steps in a circle: 1 Understand, 2 Design the smallest useful piece, 3 Build and test, 4 Observe, 5 Decide what changes, then back to Understand.</desc>
+<defs><marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--c-accent)"/></marker></defs>
+<path d="M228.0,62.2 A118,118 0 0 1 267.7,91.0" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M297.4,182.3 A118,118 0 0 1 282.2,229.0" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M204.5,285.4 A118,118 0 0 1 155.5,285.4" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M77.8,229.0 A118,118 0 0 1 62.6,182.3" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M92.3,91.0 A118,118 0 0 1 132.0,62.2" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<g class="cy-node"><rect x="124.0" y="31.0" width="112" height="42" rx="21"/><text x="180.0" y="57.0" text-anchor="middle"><tspan class="cy-n">1</tspan> Understand</text></g>
+<g class="cy-node"><rect x="236.2" y="112.5" width="112" height="42" rx="21"/><text x="292.2" y="138.5" text-anchor="middle"><tspan class="cy-n">2</tspan> Design</text></g>
+<g class="cy-node"><rect x="193.4" y="244.5" width="112" height="42" rx="21"/><text x="249.4" y="270.5" text-anchor="middle"><tspan class="cy-n">3</tspan> Build &amp; test</text></g>
+<g class="cy-node"><rect x="54.6" y="244.5" width="112" height="42" rx="21"/><text x="110.6" y="270.5" text-anchor="middle"><tspan class="cy-n">4</tspan> Observe</text></g>
+<g class="cy-node on"><rect x="11.8" y="112.5" width="112" height="42" rx="21"/><text x="67.8" y="138.5" text-anchor="middle"><tspan class="cy-n">5</tspan> Decide</text></g>
+<text x="180" y="166" text-anchor="middle" class="cy-mid">The build</text><text x="180" y="188" text-anchor="middle" class="cy-mid">loop</text></svg>
+<figcaption>The build loop. This chapter is about step 5, Decide: what's worth automating, what stays by hand, and who approves the changes that matter.</figcaption>
+</figure>
+
+<h2>A real moment: three bots, one task list</h2>
+<div class="story">
+  <span class="callout-label">From the ALC live-class build</span>
+  <p>While building the live-class tool, every job was tracked as a ticket in a task list. Keeping that list up to date is boring work, so I automated it: every time a change was made, a bot updated the related tickets. The problem was that <strong>three bots</strong> ended up editing the same tickets. They kept changing the same items, sometimes undoing each other.</p>
+  <p>The fix was to split the work so each job had <strong>one owner</strong>:</p>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Bot</th><th>Its one job</th></tr></thead>
+    <tbody>
+      <tr><td>Bot 1</td><td>Updates ticket statuses</td></tr>
+      <tr><td>Bot 2</td><td>Adds links to the changes</td></tr>
+      <tr><td>Bot 3</td><td>Writes a weekly clean-up <strong>report</strong>. It suggests changes and doesn't make them.</td></tr>
+    </tbody>
+  </table></div>
+  <p>I read the report and approved the clean-up row by row. One week I replied with just the four row numbers I agreed with, and that moved 21 tickets.</p>
+</div>
+<div class="callout key">
+  <span class="callout-label">Key idea</span>
+  <p><strong>One owner per automation, and a human approves the changes that matter.</strong></p>
+</div>
+
+<h2>What you need</h2>
+<ul class="checklist">
+  <li>A free Google account (Google Forms, Sheets and Calendar all work on the free tier).</li>
+  <li>A free AI chat assistant to help you plan.</li>
+</ul>
+
+<h2 id="s51"><span class="sec-num">5.1</span>Find the repeated work</h2>
+<p>Good automation starts with something you do over and over, the same way each time. Google's reliability engineers call this kind of work <dfn>toil</dfn>: manual, repetitive, and something a machine could do just as well (Rau, 2016). Look for:</p>
+<ul class="checklist">
+  <li>Tasks you do every day or every week.</li>
+  <li>Tasks where you copy information from one place to another.</li>
+  <li>Tasks that are boring and easy to forget.</li>
+</ul>
+<p>In my project, one repeated check became automatic: a <strong>30-student load test</strong> (the "pretend a full class is using it" test from Chapter 4) now runs automatically before each update goes live. Instead of remembering to do it, it just happens.</p>
+
+<h2 id="s52"><span class="sec-num">5.2</span>Trigger, action, outcome</h2>
+<p>Every automation has three parts:</p>
+<ol class="flow" aria-label="Trigger, action, outcome">
+  <li>Trigger<small>what starts it: "when a form is submitted," "every Monday at 8 AM"</small></li>
+  <li>Action<small>what it does: "add a row," "send me an email"</small></li>
+  <li class="good">Outcome<small>how you know it worked: "the row is there," "I got the email"</small></li>
+</ol>
+<p>If you can't name the outcome, you can't tell when the automation silently stops working.</p>
+
+<h2 id="s53"><span class="sec-num">5.3</span>Plan for when it fails</h2>
+<p>Automations can break quietly. Nobody is watching them, which is the whole point, and also the danger. That's why professionals set up alerts that tell a person when something is actually wrong (Ewaschuk, 2016). Ask:</p>
+<ul class="checklist">
+  <li><strong>How will I find out if it stopped?</strong> A weekly check? A notification?</li>
+  <li><strong>What happens if it runs twice?</strong> From Chapter 4: if it's not safe to run twice, it's not ready (Stripe, n.d.).</li>
+  <li><strong>What happens if it runs on bad information?</strong> An empty form, a typo.</li>
+</ul>
+<div class="story">
+  <span class="callout-label">From the ALC live-class build: the ticket that kept closing itself</span>
+  <p>Our ticket tool moves a ticket to "Done" by itself when its change is merged. But our rule was different: a ticket closes only after the change passes its check on the live site. So when one ticket flipped to Done right after its change merged, I left a note explaining the rule, and it went back to In Progress. Four minutes later the automation flipped it to Done again. That evening, a reviewer bot's routine audit caught it: the ticket was marked Done even though its last change wasn't live yet.</p>
+  <ol class="flow" aria-label="The ticket that kept closing">
+    <li>Change merged</li>
+    <li class="bad">Auto: Done</li>
+    <li>Moved back<small>with a note</small></li>
+    <li class="bad">Auto: Done again</li>
+    <li class="good">Audit catches it</li>
+  </ol>
+</div>
+<p>The automation did exactly what it was built to do. The real rule lived in our heads, not in the automation. That's why the outcome check, here a separate audit, matters.</p>
+
+<h2 id="s54"><span class="sec-num">5.4</span>Permissions: give it only what it needs</h2>
+<p>An automation acts on your behalf. If it can edit everything, a mistake can damage everything. Security experts call the fix <dfn>least privilege</dfn>: give each tool only the access it needs for its job (National Institute of Standards and Technology [NIST], n.d.; OWASP Foundation, n.d.).</p>
+<ul class="checklist">
+  <li>Give it access to <strong>only the one sheet, folder or list</strong> it needs.</li>
+  <li>Prefer "can suggest" or "can view" over "can edit" when that's enough.</li>
+  <li>Never give an automation your password. Use the tool's proper "connect" or "allow access" button, and read what it's asking for.</li>
+</ul>
+<p>That's why my clean-up bot only wrote a report. It didn't need permission to change tickets, because I made the changes after approving them.</p>
+
+<h2 id="s55"><span class="sec-num">5.5</span>When NOT to automate, and keep a human in charge</h2>
+<div class="table-wrap"><table>
+  <thead><tr><th>Don't automate when...</th><th>Because</th></tr></thead>
+  <tbody>
+    <tr><td>You've only done the task once or twice</td><td>You don't know the pattern yet. Google's engineers only count work as toil when it happens over and over (Rau, 2016).</td></tr>
+    <tr><td>A mistake would hurt someone</td><td>Especially if it touches personal information or grades.</td></tr>
+    <tr><td>Each case needs judgement, not a rule</td><td>Work that needs human judgement isn't toil (Rau, 2016).</td></tr>
+    <tr><td>Fixing it would take longer than doing it by hand</td><td>The automation costs more than it saves.</td></tr>
+  </tbody>
+</table></div>
+<p>And when the change matters, <strong>let the automation suggest and let a human approve</strong>. The US standards agency NIST says the roles of the humans who oversee an AI system need to be clearly defined (NIST, 2023). AI researcher Andrej Karpathy makes the same case: keep humans in the loop, and give AI tools more independence only carefully (Y Combinator, 2025). Approving four rows took me seconds, and I stayed in charge of what actually changed.</p>
+<div class="story">
+  <span class="callout-label">From the ALC live-class build: what we deliberately did NOT automate</span>
+  <p>My AI helpers write, test and combine changes, but they can't put a change in front of real students. Every update to the live site waits for me to approve it myself, and that hold was added on purpose. The automatic load test runs before my approval, never instead of it, and it's blocked from touching the live site. Spending money is also kept for a human: a bigger server needs my OK. A mistake in either place hits real students mid-class or costs real money, so a person makes the call.</p>
+</div>
+<div class="callout">
+  <span class="callout-label">Coming up in Book 2</span>
+  <p>Once you start automating, you'll notice a flood of helpers: connectors, bots, plugins, and apps that link your tools together. Book 2 will give you a simple way to evaluate them with a few plain questions. What job does it do? What does it need access to? Can I try it without paying? What happens if it breaks? And when is "do it by hand" still the better answer?</p>
+</div>
+
+<h2>What you must check yourself</h2>
+<ul class="checklist">
+  <li><strong>Did the outcome actually happen?</strong> Check the sheet or inbox after every test.</li>
+  <li><strong>Is its access as narrow as possible?</strong> One sheet, one folder, view over edit.</li>
+  <li><strong>Who approves the changes that matter?</strong> It should be a person, and you should know who.</li>
+</ul>
+
+<h2 id="try">Try it: automate one thing with Google Forms and Sheets</h2>
+<p class="small">Free · about 45 minutes</p>
+<ol class="steps">
+  <li><strong>Pick one repeated task</strong> from your own life or class: collecting club sign-ups, tracking homework done, logging practice minutes.</li>
+  <li><strong>Write it down:</strong> trigger, action, outcome. Also write how you'll know if it fails, and who approves changes that matter.</li>
+  <li><strong>Build it.</strong> Make a Google Form with only the questions you truly need, using stand-ins, not real names, while testing. In the form's <strong>Responses</strong> tab, choose to save responses to a Google Sheet (Google calls this "Select destination for responses"; the button may say "Link to Sheets"). Now every submission adds a row automatically (Google, n.d.-a). That's your trigger and action.</li>
+  <li><strong>Get told when it runs.</strong> In the <strong>Responses</strong> tab, open the <strong>More</strong> menu and turn on <strong>Get email notifications for new responses</strong> (Google, n.d.-b).</li>
+  <li><strong>Test it:</strong> submit three test entries, including one empty or weird one, and one sent twice. Check the sheet. What happened?</li>
+  <li><strong>Permission check:</strong> look at the Share settings on your Form and Sheet. Make them as narrow as possible. People you add as editors of the form may also get access to the linked sheet, so check both (Google, n.d.-a).</li>
+  <li><strong>Decide:</strong> write two sentences on whether this was worth automating, and one thing you would keep doing by hand.</li>
+</ol>
+<div class="callout">
+  <span class="callout-label">Hand-in</span>
+  <ul class="checklist"><li>Your trigger, action and outcome plan</li><li>A screenshot of the sheet with test entries only (no real people)</li><li>Your decision</li></ul>
+</div>
+
+<h2>Chapter recap</h2>
+<ul>
+  <li>Automate repeated work, and only one thing at a time.</li>
+  <li>Name the trigger, action and outcome.</li>
+  <li>Plan for silent failure and running twice.</li>
+  <li>Give automations only the access they need.</li>
+  <li>One owner per automation. A human approves the changes that matter.</li>
+  <li>Sometimes the right answer is "don't automate."</li>
+</ul>
+<a class="next" href="ch6.html">Next up, Chapter 6: The capstone →</a>
+
+<aside class="teacher" aria-label="Teacher box">
+  <span class="callout-label">Teacher box</span>
+  <h3>Timing</h3>
+  <p>2 lessons of 60-75 minutes. Lesson 1: opener and 5.1-5.3; students write their plan. Lesson 2: 5.4-5.5 and the Forms and Sheets build.</p>
+  <h3>Common sticking points</h3>
+  <ul>
+    <li>Students choose something too big ("automate my whole schedule"). Push them to one trigger and one action.</li>
+    <li>School Google accounts may limit Forms sharing or email notifications. Check your domain settings beforehand; a teacher-run demo also works.</li>
+    <li>Students forget the outcome step and assume it worked. Require them to check the sheet after each test entry.</li>
+    <li>Test entries with real names. Redirect to "Student A," "Test 1," and so on.</li>
+  </ul>
+  <h3>How to assess</h3>
+  <ul class="checklist">
+    <li>The plan names a clear trigger, action, outcome and failure check.</li>
+    <li>Test entries include an odd case and a duplicate, with results noted.</li>
+    <li>Share settings are appropriately narrow.</li>
+    <li>The decision shows judgement about what not to automate.</li>
+  </ul>
+</aside>
+
+<section class="references" aria-labelledby="refs">
+<h2 id="refs">References</h2>
+<ul>
+<li>Ewaschuk, R. (2016). Monitoring distributed systems. In B. Beyer, C. Jones, J. Petoff, &amp; N. R. Murphy (Eds.), <em>Site reliability engineering: How Google runs production systems</em>. O'Reilly Media; Google. https://sre.google/sre-book/monitoring-distributed-systems/</li>
+<li>Google. (n.d.-a). <em>Choose where to save form responses</em> [Google Docs Editors Help]. Retrieved October 15, 2026, from https://support.google.com/docs/answer/2917686</li>
+<li>Google. (n.d.-b). <em>View &amp; manage form responses</em> [Google Docs Editors Help]. Retrieved October 15, 2026, from https://support.google.com/docs/answer/139706</li>
+<li>National Institute of Standards and Technology. (n.d.). <em>Least privilege</em> [Glossary entry]. Computer Security Resource Center. Retrieved October 15, 2026, from https://csrc.nist.gov/glossary/term/least_privilege</li>
+<li>National Institute of Standards and Technology. (2023). <em>Artificial intelligence risk management framework (AI RMF 1.0)</em> (NIST AI 100-1). U.S. Department of Commerce. https://doi.org/10.6028/NIST.AI.100-1</li>
+<li>OWASP Foundation. (n.d.). <em>Secrets management cheat sheet</em>. OWASP Cheat Sheet Series. Retrieved October 15, 2026, from https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html</li>
+<li>Rau, V. (2016). Eliminating toil. In B. Beyer, C. Jones, J. Petoff, &amp; N. R. Murphy (Eds.), <em>Site reliability engineering: How Google runs production systems</em>. O'Reilly Media; Google. https://sre.google/sre-book/eliminating-toil/</li>
+<li>Stripe. (n.d.). <em>Idempotent requests</em>. Stripe API Reference. Retrieved October 15, 2026, from https://docs.stripe.com/api/idempotent_requests</li>
+<li>Y Combinator. (2025, June 18). <em>Andrej Karpathy: Software is changing (again)</em> [Video]. YouTube. https://www.youtube.com/watch?v=LCEmiRjPEtQ</li>
+</ul>
+<p class="note">Case-study facts (three bots on one task list, the automatic load test, the ticket that kept closing itself, the human-approval hold on live updates and spending) come from the ALC live-class build, September-October 2026, and are not from these sources.</p>
+</section>
+
+</main></body></html>

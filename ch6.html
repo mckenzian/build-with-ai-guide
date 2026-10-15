@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 6: Capstone: A Real Tool for a Real Person</title><link rel="stylesheet" href="guide.css"></head>
+<body><main class="page">
+<p class="draft">DRAFT - pending Wonder wording pass, ELC student-data check and Shawn approval</p>
+
+<header class="ch-header">
+  <span class="ch-kicker">Chapter 6 · The capstone</span>
+  <h1>Capstone: A Real Tool for a Real Person</h1>
+  <p class="lead">This is where everything comes together. You'll build one small tool for one real person, using the whole build loop. When you're done, you'll have something that works, that you can show, and that someone else could look after.</p>
+  <section class="goals" aria-label="Learning goals">
+    <h2>By the end of this chapter you can</h2>
+    <ul>
+      <li>Find a real person and capture their need in their words.</li>
+      <li>Agree what "done" means before you build.</li>
+      <li>Run the whole build loop and keep a build log.</li>
+      <li>Write a half-page handoff note someone else could use.</li>
+      <li>Give a 2-minute demo that shows it works and that you checked it.</li>
+    </ul>
+  </section>
+  <nav class="toc" aria-label="In this chapter"><ol>
+    <li><a href="#s61">A real person and need</a></li><li><a href="#s62">What "done" means</a></li>
+    <li><a href="#s63">Work the loop</a></li><li><a href="#s64">The handoff note</a></li>
+    <li><a href="#s65">The demo</a></li><li><a href="#try">Your capstone</a></li><li><a href="#rubric">Rubric</a></li>
+  </ol></nav>
+</header>
+
+<figure class="cycle">
+<svg class="cycle-svg" viewBox="0 0 360 340" role="img" aria-labelledby="loop-t loop-d"><title id="loop-t">The build loop</title><desc id="loop-d">Five steps in a circle: 1 Understand, 2 Design the smallest useful piece, 3 Build and test, 4 Observe, 5 Decide what changes, then back to Understand.</desc>
+<defs><marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--c-accent)"/></marker></defs>
+<path d="M228.0,62.2 A118,118 0 0 1 267.7,91.0" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M297.4,182.3 A118,118 0 0 1 282.2,229.0" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M204.5,285.4 A118,118 0 0 1 155.5,285.4" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M77.8,229.0 A118,118 0 0 1 62.6,182.3" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M92.3,91.0 A118,118 0 0 1 132.0,62.2" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<g class="cy-node on"><rect x="124.0" y="31.0" width="112" height="42" rx="21"/><text x="180.0" y="57.0" text-anchor="middle"><tspan class="cy-n">1</tspan> Understand</text></g>
+<g class="cy-node on"><rect x="236.2" y="112.5" width="112" height="42" rx="21"/><text x="292.2" y="138.5" text-anchor="middle"><tspan class="cy-n">2</tspan> Design</text></g>
+<g class="cy-node on"><rect x="193.4" y="244.5" width="112" height="42" rx="21"/><text x="249.4" y="270.5" text-anchor="middle"><tspan class="cy-n">3</tspan> Build &amp; test</text></g>
+<g class="cy-node on"><rect x="54.6" y="244.5" width="112" height="42" rx="21"/><text x="110.6" y="270.5" text-anchor="middle"><tspan class="cy-n">4</tspan> Observe</text></g>
+<g class="cy-node on"><rect x="11.8" y="112.5" width="112" height="42" rx="21"/><text x="67.8" y="138.5" text-anchor="middle"><tspan class="cy-n">5</tspan> Decide</text></g>
+<text x="180" y="166" text-anchor="middle" class="cy-mid">The build</text><text x="180" y="188" text-anchor="middle" class="cy-mid">loop</text></svg>
+<figcaption>The build loop. In the capstone you run every step yourself, so the whole loop is lit up: Understand, Design, Build and test, Observe, Decide, and round again.</figcaption>
+</figure>
+
+<h2>A real moment: how the live-class tool started</h2>
+<div class="story">
+  <span class="callout-label">From the ALC live-class build</span>
+  <p>The live-class tool didn't start as a big plan. It started with a plain description of what students could already do: type a class code, wait, pick a name, and see a live scoreboard. At that point, that "join a live game" screen was the whole student side.</p>
+  <p>When I brought in AI helpers, I didn't tell them to build the finished thing. I told them to stop and ask me four questions first, and to wait for a yes:</p>
+  <ol class="steps">
+    <li>Which pages are needed?</li><li>How do students sign in?</li><li>How does it fit with the live game?</li><li>Where do the lessons come from?</li>
+  </ol>
+  <p>The same day, the first real job list was written:</p>
+  <ul class="checklist">
+    <li>Press "Run Live Class" and get a fresh class code.</li>
+    <li>Open attendance.</li>
+    <li>Allow only one live class per teacher at a time.</li>
+    <li>Clear students' mood check-ins at the start and end.</li>
+  </ul>
+</div>
+<div class="callout key">
+  <span class="callout-label">Key idea</span>
+  <p>Small, clear, testable. Everything else in this guide grew from there, and your capstone starts the same way. Making the AI ask before it builds is advice Ethan Mollick gives too: invite it to ask about anything that's unclear (Mollick, 2024).</p>
+</div>
+
+<h2 id="s61"><span class="sec-num">6.1</span>Pick a real person and a real need</h2>
+<p>Find someone who actually has a small problem: a teacher, a coach, a club leader, a family member, a classmate. Ask them about it. Listen for the need, not their first idea for a solution (remember Chapter 1). Professional teams do the same: they write the need from the user's point of view, then talk it through with the people they're building for (Rehkopf, n.d.).</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Good size</th><th>Too big</th></tr></thead>
+  <tbody>
+    <tr><td class="good">A sign-up form with a sheet that sorts itself, for a club leader</td><td class="bad">"An app for the whole school"</td></tr>
+    <tr><td class="good">A flashcard or quiz page for a classmate's test</td><td class="bad">"A study app for every subject"</td></tr>
+    <tr><td class="good">A practice-minutes tracker for a coach</td><td class="bad">"A full team-management system"</td></tr>
+  </tbody>
+</table></div>
+<p>If it can't be shown in 2 minutes, shrink it.</p>
+
+<h2 id="s62"><span class="sec-num">6.2</span>What "done" means</h2>
+<p>Software teams agree on a "definition of done" up front, so everyone knows what finished means (Atlassian, n.d.). Your capstone is done when you have all six of these:</p>
+<ol class="steps">
+  <li><strong>The need:</strong> one sentence: person + situation + need.</li>
+  <li><strong>The spec:</strong> what it does, what it doesn't do, how you'll know it works.</li>
+  <li><strong>A passing acceptance test:</strong> the "how you'll know it works" line, actually tried, with the result written down. It must pass.</li>
+  <li><strong>A never-break list:</strong> the one to three things it must always get right, including keeping people's information safe.</li>
+  <li><strong>A 2-minute demo:</strong> you show it working, live, to the class or your person.</li>
+  <li><strong>A half-page handoff note</strong> (see 6.4).</li>
+</ol>
+
+<h2 id="s63"><span class="sec-num">6.3</span>Work the loop</h2>
+<p>Use each chapter as a step:</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Chapter</th><th>What you do in the capstone</th></tr></thead>
+  <tbody>
+    <tr><td><strong>1 · Plan</strong></td><td>Need, small jobs, spec, never-break list.</td></tr>
+    <tr><td><strong>2 · Delegate</strong></td><td>Give the AI one job at a time with context; make it ask questions first; use a separate reviewer chat.</td></tr>
+    <tr><td><strong>3 · Test and fix</strong></td><td>Test like a troublemaker; ask "what happens the second time?"; keep saved copies; make small fixes.</td></tr>
+    <tr><td><strong>4 · Ship check</strong></td><td>Run the ready-for-users checklist; use stand-ins, not real personal information; narrow share settings.</td></tr>
+    <tr><td><strong>5 · Automate?</strong></td><td>Only if one part is truly repeated, and a human still approves what matters. It's fine to skip this.</td></tr>
+  </tbody>
+</table></div>
+<p>Keep a short <strong>build log</strong> in a Google Doc as you go. For each feature, note:</p>
+<ol class="flow" aria-label="Build log entry">
+  <li>Idea</li><li>Spec</li><li>What the AI did</li><li class="bad">Test<small>and the problem it found</small></li><li class="good">Why the next change</li>
+</ol>
+<p>That's exactly how the stories in this guide were told.</p>
+
+<h2 id="s64"><span class="sec-num">6.4</span>The handoff note</h2>
+<p>In my experience, real tools often need looking after by someone other than the person who built them. Good notes are short, accurate, and kept up to date (Google, n.d.). Your handoff note is a half page with three parts:</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Part</th><th>What goes in it</th></tr></thead>
+  <tbody>
+    <tr><td><strong>How it works</strong></td><td>In plain words, what happens when someone uses it. Where the information lives.</td></tr>
+    <tr><td><strong>What it can't do</strong></td><td>Its limits. What you chose to leave out. What could go wrong.</td></tr>
+    <tr><td><strong>How to fix it</strong></td><td>Where the saved copies are, what to check first if it breaks, and who to ask.</td></tr>
+  </tbody>
+</table></div>
+<div class="story">
+  <span class="callout-label">From the ALC live-class build: a real check report, as a model</span>
+  <p>After one update went live, the reviewer bot wrote this note (simplified):</p>
+  <ul class="checklist">
+    <li><strong>Verdict: LIVE PASS.</strong></li>
+    <li><strong>What went out:</strong> the fix that closes live connections properly instead of leaving them open.</li>
+    <li><strong>Server:</strong> started once, 0 restarts. Health check OK. All files match the approved version.</li>
+    <li><strong>Since the update:</strong> 0 errors, 0 timeouts, 0 new issues in the error tracker.</li>
+    <li><strong>How I checked:</strong> read-only. No sign-ins, no changes.</li>
+    <li><strong>Blocking problems:</strong> none.</li>
+  </ul>
+  <p>It's a check report rather than a full handoff note, but it shows the habits to copy: the verdict first, one line per check, how the checking was done, and what's left to do.</p>
+</div>
+<details>
+  <summary>See a sample student handoff note <span class="opt">(optional, you can skip this)</span></summary>
+  <div>
+<pre>CLUB SIGN-UP FORM: HANDOFF NOTE
+How it works: Members fill in a Google Form (first name and grade only).
+Each answer becomes a row in the "Sign-ups" Sheet, sorted by grade.
+What it can't do: It doesn't send reminders. It can't stop someone
+signing up twice; check for duplicates before each meeting.
+How to fix it: Saved copies are in the "Versions" Doc. If rows stop
+appearing, check the form's Responses tab is still linked to the Sheet.
+Ask: the club leader (owner of the form).</pre>
+  <p class="small">A teaching example, not from the live-class build.</p>
+  </div>
+</details>
+
+<h2 id="s65"><span class="sec-num">6.5</span>The demo</h2>
+<p>You have 2 minutes. A good demo:</p>
+<ol class="flow" aria-label="Two-minute demo">
+  <li>The need<small>15 seconds</small></li>
+  <li>Main job, live<small>60 seconds</small></li>
+  <li class="good">Test passing<small>20 seconds</small></li>
+  <li>One problem and fix<small>25 seconds</small></li>
+</ol>
+<p>Don't show everything. Show that it works and that you checked it.</p>
+
+<h2>What you must check yourself</h2>
+<ul class="checklist">
+  <li><strong>Did your real person agree it meets their need?</strong> Ask them, don't assume.</li>
+  <li><strong>Does your acceptance test pass today?</strong> Run it again before the demo.</li>
+  <li><strong>Is there any real personal information in the tool, the test data or the AI chats?</strong></li>
+</ul>
+
+<h2 id="try">Try it: your capstone</h2>
+<ol class="steps">
+  <li>Interview your real person. Write the need sentence.</li>
+  <li>Write your spec and never-break list. Show your person: <em>"Is this what you need?"</em> Hand it to a classmate: <em>"Can you tell what I'm building?"</em></li>
+  <li>Build it with a free AI assistant and free tools (Google Forms, Sheets, Docs, or a simple page the AI makes). One job at a time.</li>
+  <li>Test it. Record your acceptance test result and at least five troublemaker tests.</li>
+  <li>Run the ready-for-users checklist.</li>
+  <li>Write your half-page handoff note.</li>
+  <li>Give your 2-minute demo.</li>
+  <li>Write a short reflection: what went wrong, what you learned, what you'd do next.</li>
+</ol>
+
+<h2 id="rubric">Rubric</h2>
+<p>Four areas, each scored 1 to 4. The demo and handoff note are required to count as done; they are assessed as evidence in the Checking and Reflection rows.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Level</th><th>Plan</th><th>Checking</th></tr></thead>
+  <tbody>
+    <tr><td><strong>1 · Beginning</strong></td><td>Idea with no clear person or need.</td><td>Little or no testing.</td></tr>
+    <tr><td><strong>2 · Developing</strong></td><td>Need stated, but the spec is vague or missing a part.</td><td>Acceptance test written but not passed or not recorded.</td></tr>
+    <tr><td><strong>3 · Proficient</strong></td><td>Clear need, three-part spec, never-break list.</td><td>Acceptance test passes; several troublemaker tests recorded.</td></tr>
+    <tr><td><strong>4 · Excellent</strong></td><td>Plan was checked with the real person and a classmate, and changed based on what they said.</td><td>Found a real problem, fixed it with a small change, re-ran tests, and kept saved copies.</td></tr>
+  </tbody>
+</table></div>
+<div class="table-wrap"><table>
+  <thead><tr><th>Level</th><th>Safety</th><th>Reflection</th></tr></thead>
+  <tbody>
+    <tr><td><strong>1 · Beginning</strong></td><td>Uses real personal information or shares too widely.</td><td>Describes what was built only.</td></tr>
+    <tr><td><strong>2 · Developing</strong></td><td>Some safety steps, but gaps remain.</td><td>Names a problem but not what was learned.</td></tr>
+    <tr><td><strong>3 · Proficient</strong></td><td>Stand-ins used; share settings narrow; checklist done.</td><td>Explains what went wrong, why, and what changed.</td></tr>
+    <tr><td><strong>4 · Excellent</strong></td><td>Collects only what's needed; run-twice test done; safety choices explained in the handoff note.</td><td>Connects decisions to the build loop and says clearly what they'd do next and why.</td></tr>
+  </tbody>
+</table></div>
+
+<h2>Chapter recap</h2>
+<ul>
+  <li>Build one small tool for one real person.</li>
+  <li>Done = need, spec, passing acceptance test, never-break list, 2-minute demo, half-page handoff note.</li>
+  <li>Work the whole loop and keep a build log.</li>
+  <li>AI can write much of the tool. You decided what was worth building, and you checked it.</li>
+</ul>
+<a class="next" href="index.html">Back to the guide contents →</a>
+
+<aside class="teacher" aria-label="Teacher box">
+  <span class="callout-label">Teacher box</span>
+  <h3>Timing</h3>
+  <p>4-6 lessons of 60-75 minutes. Lesson 1: pick a person, interview, need and spec. Lessons 2-4: build, test, fix (check build logs each lesson). Lesson 5: ready-for-users check and handoff note. Lesson 6: demos (about 15 demos per lesson at 2 minutes plus changeover).</p>
+  <h3>Common sticking points</h3>
+  <ul>
+    <li>Projects too big. Approve each spec before building starts; the 2-minute demo rule is a good size check.</li>
+    <li>No real person. Let students use you, another teacher or a classmate as the "client."</li>
+    <li>Free-tier message limits stall a build. A saved spec and build log in a Google Doc let students restart quickly in a new chat.</li>
+    <li>Real personal information creeps in. Check test data at the ship-check lesson.</li>
+    <li>Handoff notes turn into a list of features. Point back to the three headings: how it works, what it can't do, how to fix it.</li>
+  </ul>
+  <h3>How to assess</h3>
+  <ul class="checklist">
+    <li>Use the rubric (Plan, Checking, Safety, Reflection).</li>
+    <li>Confirm all six "done" items exist before scoring.</li>
+    <li>The build log is the best evidence of real checking; weight it over polish.</li>
+    <li>A simple tool that's honestly tested should score higher than a flashy one that wasn't checked.</li>
+  </ul>
+</aside>
+
+<section class="references" aria-labelledby="refs">
+<h2 id="refs">References</h2>
+<ul>
+<li>Atlassian. (n.d.). <em>What is the definition of done (DoD) in Agile?</em> Retrieved October 15, 2026, from https://www.atlassian.com/agile/project-management/definition-of-done</li>
+<li>Google. (n.d.). <em>Documentation best practices</em>. Google Style Guides. Retrieved October 15, 2026, from https://google.github.io/styleguide/docguide/best_practices.html</li>
+<li>Mollick, E. (2024, November 24). <em>Getting started with AI: Good enough prompting</em>. One Useful Thing. https://www.oneusefulthing.org/p/getting-started-with-ai-good-enough</li>
+<li>Rehkopf, M. (n.d.). <em>User stories with examples and a template</em>. Atlassian. Retrieved October 15, 2026, from https://www.atlassian.com/agile/project-management/user-stories</li>
+</ul>
+<p class="note">Case-study facts (how the live-class tool started, the first job list, the reviewer bot's live check) come from the ALC live-class build, September-October 2026, and are not from these sources. The sample handoff note is a teaching example.</p>
+</section>
+
+</main></body></html>
