@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 1: Think Like an Architect</title><link rel="stylesheet" href="guide.css"></head>
+<body><main class="page">
+<p class="draft">DRAFT - Wonder's wording pass done; waiting for ELC's student-data check and Shawn's approval</p>
+
+<header class="ch-header">
+  <span class="ch-kicker">Chapter 1 · The architecture</span>
+  <h1>Think Like an Architect</h1>
+  <p class="lead">Typing code used to be the hard part of making software. Now AI tools can write a lot of it for you. What they still can't do is decide <em>what</em> should be built, how the pieces fit together, and what "done" looks like. That's your job, and it's the skill this course teaches.</p>
+  <section class="goals" aria-label="Learning goals">
+    <h2>By the end of this chapter you can</h2>
+    <ul>
+      <li>Name the person and their need before you think about features.</li>
+      <li>Tell the real need apart from the first idea for a solution.</li>
+      <li>Break a big idea into small jobs, and write a three-line spec for one of them.</li>
+      <li>Name what can never break.</li>
+      <li>Turn "how you'll know it works" into a test someone else can run.</li>
+    </ul>
+  </section>
+  <nav class="toc" aria-label="In this chapter"><ol>
+    <li><a href="#loop">The build loop</a></li><li><a href="#s11">Start with the person</a></li>
+    <li><a href="#s12">Break it into small jobs</a></li><li><a href="#s13">Write the spec first</a></li>
+    <li><a href="#s14">Decide what can never break</a></li><li><a href="#s15">Make success testable</a></li>
+    <li><a href="#try">Try it</a></li>
+  </ol></nav>
+</header>
+
+<figure class="cycle">
+<svg class="cycle-svg" viewBox="0 0 360 340" role="img" aria-labelledby="loop-t loop-d"><title id="loop-t">The build loop</title><desc id="loop-d">Five steps in a circle: 1 Understand, 2 Design the smallest useful piece, 3 Build and test, 4 Observe, 5 Decide what changes, then back to Understand.</desc>
+<defs><marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--c-accent)"/></marker></defs>
+<path d="M228.0,62.2 A118,118 0 0 1 267.7,91.0" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M297.4,182.3 A118,118 0 0 1 282.2,229.0" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M204.5,285.4 A118,118 0 0 1 155.5,285.4" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M77.8,229.0 A118,118 0 0 1 62.6,182.3" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M92.3,91.0 A118,118 0 0 1 132.0,62.2" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<g class="cy-node on"><rect x="124.0" y="31.0" width="112" height="42" rx="21"/><text x="180.0" y="57.0" text-anchor="middle"><tspan class="cy-n">1</tspan> Understand</text></g>
+<g class="cy-node"><rect x="236.2" y="112.5" width="112" height="42" rx="21"/><text x="292.2" y="138.5" text-anchor="middle"><tspan class="cy-n">2</tspan> Design</text></g>
+<g class="cy-node"><rect x="193.4" y="244.5" width="112" height="42" rx="21"/><text x="249.4" y="270.5" text-anchor="middle"><tspan class="cy-n">3</tspan> Build &amp; test</text></g>
+<g class="cy-node"><rect x="54.6" y="244.5" width="112" height="42" rx="21"/><text x="110.6" y="270.5" text-anchor="middle"><tspan class="cy-n">4</tspan> Observe</text></g>
+<g class="cy-node"><rect x="11.8" y="112.5" width="112" height="42" rx="21"/><text x="67.8" y="138.5" text-anchor="middle"><tspan class="cy-n">5</tspan> Decide</text></g>
+<text x="180" y="166" text-anchor="middle" class="cy-mid">The build</text><text x="180" y="188" text-anchor="middle" class="cy-mid">loop</text></svg>
+<figcaption>The build loop you'll use in every chapter. This chapter is about step 1, Understand: who it's for and what they need, before anything gets built.</figcaption>
+</figure>
+
+<h2>A real moment: a vague request, a bad build</h2>
+<div class="story">
+  <span class="callout-label">From the ALC live-class build</span>
+  <p>I asked an AI helper for a "Celebrations" board to recognize students. That was the whole request. The AI built it fast: four award cards on the school's front page. But my request never said where the results would come from, or what to show before there were any. So the cards went up empty, and the board was taken down the same day.</p>
+  <ol class="flow" aria-label="What happened">
+    <li>Vague request<small>"a Celebrations board"</small></li>
+    <li>AI builds fast<small>four award cards</small></li>
+    <li class="bad">Cards are empty<small>no data, no plan for "nothing yet"</small></li>
+    <li>Taken down<small>same day</small></li>
+  </ol>
+</div>
+<div class="callout key">
+  <span class="callout-label">Key idea</span>
+  <p>The AI did what I asked. I hadn't asked for enough. A fast builder with no plan just builds a mess faster. The fix isn't a smarter AI. It's a better plan, and that's what this chapter teaches.</p>
+</div>
+<p>Think of it like building a house. An AI tool is a very fast crew of builders. The architect is the person who draws the plan. In this course, that's you. AI researcher Andrej Karpathy describes it the same way: the AI does the generating, and people do the checking (Y Combinator, 2025).</p>
+
+<h2>What you need</h2>
+<ul class="checklist">
+  <li><strong>Pen and paper</strong>, or any free notes app (Google Docs, for example).</li>
+  <li><strong>A free AI chat assistant.</strong> Several popular assistants, such as ChatGPT, Google Gemini and Claude, have offered free versions, but plans change, so check before class. You don't need a paid plan for anything here.</li>
+</ul>
+<div class="callout warn">
+  <span class="callout-label">Check the age rules and get school approval first</span>
+  <p>Some AI assistants are for adults only, and some plans have age limits. Read each tool's age rules, and use only a tool your school has approved (see Chapter 4) and that your family allows.</p>
+</div>
+
+<h2 id="loop">The build loop</h2>
+<p>Every project in this course goes round the same five steps. You'll come back to this loop in every chapter.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Step</th><th>The question you ask</th></tr></thead>
+  <tbody>
+    <tr><td><strong>1 · Understand</strong></td><td>Who is this for, and what do they actually need?</td></tr>
+    <tr><td><strong>2 · Design</strong></td><td>What's the smallest useful piece I can build first?</td></tr>
+    <tr><td><strong>3 · Build and test</strong></td><td>Does it do what the plan says?</td></tr>
+    <tr><td><strong>4 · Observe</strong></td><td>What really happens when someone uses it?</td></tr>
+    <tr><td><strong>5 · Decide</strong></td><td>What changes next?</td></tr>
+  </tbody>
+</table></div>
+
+<h2>A real example: the live-class tool</h2>
+<p>I built a live-class tool where students answer questions during class, earn points with their teams, and catch up on anything they missed. I didn't start by writing code. I started with one question: <em>What does a teacher need in the first five minutes of class?</em></p>
+<div class="story">
+  <span class="callout-label">From the ALC live-class build</span>
+  <p>In my online classes, the first few minutes go to putting students into breakout rooms, and each room is a team in the live-class tool. Matching rooms to teams takes real effort. So when an early version crashed and lost the teams, I had to redo the whole match in the middle of class. That one moment became a rule: team assignments have to survive a crash.</p>
+</div>
+<p>Each lesson in this chapter answers one planning question. Lesson 1.4 is a little different: it doesn't describe one part, it protects all of them.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Lesson</th><th>Answers</th></tr></thead>
+  <tbody>
+    <tr><td>1.1 The person and the need</td><td><strong>What</strong> are we building, and for whom?</td></tr>
+    <tr><td>1.2 Small jobs</td><td><strong>How</strong> do the pieces fit together?</td></tr>
+    <tr><td>1.3 The spec</td><td><strong>What</strong> does one piece do, and not do?</td></tr>
+    <tr><td>1.4 The never-break list</td><td><strong>What must stay true</strong> across every piece, every time</td></tr>
+    <tr><td>1.5 Testable success</td><td><strong>Done:</strong> how will anyone know it works?</td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="s11"><span class="sec-num">1.1</span>Start with the person, not the feature</h2>
+<p>It's tempting to start with cool features: "It should have leaderboards! And dark mode! And sound effects!" Architects start somewhere else: with the person who will use the thing.</p>
+<p>Write <strong>one sentence</strong> about who uses it and what they need. Software teams call this a <dfn>user story</dfn>: a short, plain-language note about a person, what they want, and why (Rehkopf, n.d.).</p>
+<p class="prompt good"><b>A need</b>"A teacher can tell within seconds whether the class is following."</p>
+<p>That sentence names a person (a teacher), a situation (teaching a class) and a need (knowing, fast, if students are keeping up). Every feature you add later should help with that need. If it doesn't, it can wait.</p>
+<h3>The need is not the first solution</h3>
+<p>Notice what the sentence <em>doesn't</em> say. It doesn't say "a points system." Points might be one way to meet the need, but so might a quick thumbs-up poll. If you write the solution down as the need, you've made the decision before you understood the problem.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>A first idea (a solution)</th><th>The need underneath</th></tr></thead>
+  <tbody>
+    <tr><td class="bad">"A points system"</td><td class="good">"A teacher can tell within seconds whether the class is following."</td></tr>
+    <tr><td class="bad">"A homework app with reminders"</td><td class="good">"I keep forgetting which assignments are due tomorrow."</td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="s12"><span class="sec-num">1.2</span>Break it into small jobs</h2>
+<p>A big idea is hard to build all at once, for you <em>and</em> for an AI tool. So break it into small jobs that can each be built and tested on their own. Experienced teams work this way too: they split work into chunks of a few hours, so problems show up early, while they're still easy to find (Fowler, 2024).</p>
+<p>For the live-class tool, the first jobs looked like this:</p>
+<ol class="flow" aria-label="Four small jobs">
+  <li>Joining a class</li><li>Showing questions</li><li>Collecting answers</li><li>Keeping score</li>
+</ol>
+<p>Each job is small enough to describe clearly, build on its own, and check before moving on. If "keeping score" has a bug, you fix keeping score. You don't have to untangle the whole app. (In Chapter 2 you'll see a real fix that went wrong and was easy to catch, because it was one small job.)</p>
+
+<h2 id="s13"><span class="sec-num">1.3</span>Write the spec before the build</h2>
+<p>A <dfn>spec</dfn> (short for "specification") is a short note that says three things about one job:</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Part</th><th>Example: a quiz page</th></tr></thead>
+  <tbody>
+    <tr><td><strong>What it does</strong></td><td>Shows one multiple-choice question at a time.</td></tr>
+    <tr><td><strong>What it doesn't do</strong></td><td>No logins and no saving yet.</td></tr>
+    <tr><td><strong>How you'll know it works</strong></td><td>I click an answer and see "Correct" or "Try again."</td></tr>
+  </tbody>
+</table></div>
+<p>Compare these two requests:</p>
+<p class="prompt bad"><b>Vague</b>"Make a quiz app."</p>
+<p class="prompt good"><b>Clear</b>"Make a page that shows one multiple-choice question at a time. It does not need logins or saving yet. It works if I can click an answer and see 'Correct' or 'Try again.'"</p>
+<p>The second one tells the AI what to build, what to skip, and how to check its work. Karpathy explains why this matters: a vague request means the AI doesn't do quite what you wanted, the check fails, and you end up going round in circles. A little more time spent being concrete gets you moving faster (Y Combinator, 2025). Ethan Mollick, a Wharton professor who studies how people use AI, gives the same advice: be very clear about exactly what you want (Mollick, 2024).</p>
+<h3>A spec is a living document</h3>
+<p>A spec isn't carved in stone. When you learn something, you update it. After the crash that lost the teams, the spec for "joining a class" got a new line: <em>team assignments survive a crash.</em> The spec is your best current understanding, written down where everyone (including your AI helpers) can see it.</p>
+<details>
+  <summary>See how small one job's code can be <span class="opt">(optional, you can skip this)</span></summary>
+  <div>
+<pre>score = 0
+if answer == correct_answer:
+    score = score + 1</pre>
+  <p class="small">A tiny piece of a "keeping score" job. You won't write code in this course; the point is that a clear, small spec leads to small pieces that are easy to check.</p>
+  </div>
+</details>
+
+<h2 id="s14"><span class="sec-num">1.4</span>Decide what can never break</h2>
+<p>Some things matter more than others. An architect names those things early, so every later decision protects them. This list is different from a spec: it isn't about one job, it covers the whole project.</p>
+<p>For the live-class tool, two things could never break:</p>
+<ul class="checklist">
+  <li><strong>Student data.</strong> Information about students has to stay safe and private. Ontario's privacy commissioner invites school boards to sign a charter committing to make student privacy "a top priority" (Information and Privacy Commissioner of Ontario, n.d.).</li>
+  <li><strong>Working during a live class.</strong> If the tool fails while a teacher is mid-lesson, that's a real problem for real people.</li>
+</ul>
+<p>Once you've named your never-break list, use it to make decisions. Should you add a flashy new feature the day before a big class? Check the list. If it puts a never-break item at risk, the answer is probably "not yet."</p>
+<div class="story">
+  <span class="callout-label">From the ALC live-class build</span>
+  <p>One evening, several finished changes were ready to go live, but my first class the next morning started at 9:15. Shipping a big batch late at night would put "working during a live class" at risk, with no time to fix anything before students arrived. So the rule became: only changes checked by 8 PM go out that night. Everything else waits for the next update.</p>
+</div>
+
+<h2 id="s15"><span class="sec-num">1.5</span>Make success testable</h2>
+<p>"It works well" isn't something anyone can check. "How you'll know it works" has to be a test: something a person can actually try, with a clear pass or fail. That's called an <dfn>acceptance test</dfn>.</p>
+<span class="term"><b>Acceptance test:</b> a check, agreed before you build, that says "if this happens, the job is done."</span>
+<ol class="flow" aria-label="From need to test">
+  <li>Need<small>who and what</small></li>
+  <li>Spec<small>does, doesn't, how you'll know</small></li>
+  <li class="good">Acceptance test<small>try it: pass or fail</small></li>
+</ol>
+<div class="table-wrap"><table>
+  <thead><tr><th>Step</th><th>Example</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Need</strong></td><td>A teacher can tell within seconds whether the class is following.</td></tr>
+    <tr><td><strong>Spec</strong></td><td>The teacher's screen shows how many students have answered the current question. It doesn't show who answered what. It works if the count is right and updates quickly.</td></tr>
+    <tr><td><strong>Acceptance test</strong></td><td>Five test students answer. Within five seconds, the teacher's screen says "5 of 5 answered."</td></tr>
+  </tbody>
+</table></div>
+<p>If a classmate can read your test and run it without asking you anything, it's a good test. You'll use tests like this in every chapter from now on.</p>
+
+<h2>What you must check yourself</h2>
+<ul class="checklist">
+  <li><strong>Is the need a need, not a solution?</strong> No feature names in your one sentence.</li>
+  <li><strong>Does every job have all three spec lines?</strong> Especially "what it doesn't do."</li>
+  <li><strong>Could someone else run your acceptance test?</strong> Pass or fail, no guessing.</li>
+</ul>
+
+<h2 id="try">Try it</h2>
+<h3>Exercise 1: Plan your own app</h3>
+<p class="small">Pen and paper, or a free notes app · about 30 minutes</p>
+<ol class="steps">
+  <li>Pick an app idea, anything you'd actually like to exist. Write <strong>who it's for</strong> in one sentence (person + situation + need). Check it's a need, not a solution.</li>
+  <li>List <strong>four small jobs</strong> the app needs.</li>
+  <li>Pick one job and write a <strong>three-line spec</strong>: what it does, what it doesn't do, how you'll know it works. Turn the last line into an acceptance test.</li>
+  <li>Write your <strong>never-break list</strong>: one to three things your app must always get right.</li>
+  <li><strong>Hand your spec to someone else.</strong> Can they tell what you're building, and could they run your test? Fix whatever they had to ask about.</li>
+</ol>
+<h3>Exercise 2: Vague vs clear</h3>
+<p class="small">Any free AI chat assistant · about 15 minutes</p>
+<ol class="steps">
+  <li>Open a free AI chat assistant. Ask something vague, like "Make me a study app." Read what you get.</li>
+  <li>Start a new chat. Paste in your three-line spec from Exercise 1 instead.</li>
+  <li>Compare the two answers. Which is closer to what you wanted? Write down two or three things you noticed.</li>
+</ol>
+<div class="callout">
+  <span class="callout-label">Hand-in</span>
+  <ul class="checklist">
+    <li>Your need sentence and four jobs</li><li>One three-line spec with an acceptance test</li><li>Your never-break list</li><li>What your partner asked, and what you changed</li><li>Your notes from Exercise 2</li>
+  </ul>
+</div>
+
+<h2>Chapter recap</h2>
+<ul>
+  <li>AI can write code; <strong>you</strong> decide what gets built, and you check it.</li>
+  <li>Start with the person and their need, not the features. The need isn't the first solution.</li>
+  <li>Break big ideas into small jobs you can build and test one at a time.</li>
+  <li>Write a three-line spec before asking an AI to build anything, and keep it up to date.</li>
+  <li>Name what can never break, and protect it in every decision.</li>
+  <li>Turn "how you'll know it works" into an acceptance test someone else can run.</li>
+</ul>
+<a class="next" href="ch2.html">Next up, Chapter 2: Manage AI like a team →</a>
+
+<aside class="teacher" aria-label="Teacher box">
+  <span class="callout-label">Teacher box</span>
+  <h3>Timing</h3>
+  <p>About 2 lessons of 60-75 minutes. Lesson 1: the opener, the build loop, 1.1-1.2, and Exercise 1 steps 1-2. Lesson 2: 1.3-1.5, Exercise 1 steps 3-5 (including the spec swap), and Exercise 2.</p>
+  <h3>Common sticking points</h3>
+  <ul>
+    <li>Need sentences that are really features ("an app with a leaderboard"). Ask: "What problem does the leaderboard solve, and for whom?"</li>
+    <li>Specs with no "doesn't do" line. Students resist limits; point back to the empty Celebrations board.</li>
+    <li>Untestable success lines ("it works well", "it looks good"). Ask: "What would you click, and what would you see?"</li>
+    <li>No AI access yet (approval pending, age rules). Exercise 1 is paper-only; Exercise 2 can be a teacher-run demo on the projector.</li>
+  </ul>
+  <h3>How to assess</h3>
+  <ul class="checklist">
+    <li>The need sentence names a person, a situation and a need, with no feature in it.</li>
+    <li>Four jobs, each small enough to build and check on its own.</li>
+    <li>The spec has all three parts, and the acceptance test has a clear pass or fail.</li>
+    <li>The partner could explain the project back, or the student revised the spec after the swap.</li>
+    <li>Quick exit ticket: "Rewrite this solution as a need: 'a points system for my class.'"</li>
+  </ul>
+</aside>
+
+<section class="references" aria-labelledby="refs">
+<h2 id="refs">References</h2>
+<ul>
+<li>Fowler, M. (2024, January 18). <em>Continuous integration</em>. martinfowler.com. https://martinfowler.com/articles/continuousIntegration.html</li>
+<li>Information and Privacy Commissioner of Ontario. (n.d.). <em>Digital privacy charter for Ontario schools</em>. Retrieved October 15, 2026, from https://www.ipc.on.ca/en/privacy-organizations/digital-privacy-charter-for-ontario-schools</li>
+<li>Mollick, E. (2024, November 24). <em>Getting started with AI: Good enough prompting</em>. One Useful Thing. https://www.oneusefulthing.org/p/getting-started-with-ai-good-enough</li>
+<li>Rehkopf, M. (n.d.). <em>User stories with examples and a template</em>. Atlassian. Retrieved October 15, 2026, from https://www.atlassian.com/agile/project-management/user-stories</li>
+<li>Y Combinator. (2025, June 18). <em>Andrej Karpathy: Software is changing (again)</em> [Video]. YouTube. https://www.youtube.com/watch?v=LCEmiRjPEtQ</li>
+</ul>
+<p class="note">Case-study facts (the Celebrations board, the crash that lost the teams, the 8 PM rule) come from the ALC live-class build, September-October 2026, and are not from these sources. The need, spec and acceptance-test examples in 1.1 and 1.5 are teaching examples, not records from the build.</p>
+</section>
+
+</main></body></html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 2: Manage AI Like a Team</title><link rel="stylesheet" href="guide.css"></head>
+<body><main class="page">
+<p class="draft">DRAFT - pending Wonder wording pass, ELC student-data check and Shawn approval</p>
+
+<header class="ch-header">
+  <span class="ch-kicker">Chapter 2 · The delegation</span>
+  <h1>Manage AI Like a Team</h1>
+  <p class="lead">In Chapter 1 you learned to plan like an architect. Now it's time to hand the plan to the builders. Here's the twist: your builders are AI helpers, and they are fast, eager and sometimes confidently wrong. Managing them well is a skill, the same way running a group project well is a skill.</p>
+  <section class="goals" aria-label="Learning goals">
+    <h2>By the end of this chapter you can</h2>
+    <ul>
+      <li>Give AI one bounded job at a time: what to do, what not to touch, how to check.</li>
+      <li>Give context: who it's for, what exists, what can never break.</li>
+      <li>Spot when the AI misunderstood, and check the actual result, not its description.</li>
+      <li>Separate the builder from the reviewer, and give each helper one area to own.</li>
+      <li>Write a six-line prompt and a short rules file.</li>
+    </ul>
+  </section>
+  <nav class="toc" aria-label="In this chapter"><ol>
+    <li><a href="#s21">Give one job at a time</a></li><li><a href="#s22">Give context, not just commands</a></li>
+    <li><a href="#s23">Spot when the AI misunderstood</a></li><li><a href="#s24">Use roles: builder and reviewer</a></li>
+    <li><a href="#s25">Work in parallel</a></li><li><a href="#s26">A prompt template you can reuse</a></li>
+    <li><a href="#s27">Standing rules</a></li><li><a href="#try">Try it</a></li>
+  </ol></nav>
+</header>
+
+<figure class="cycle">
+<svg class="cycle-svg" viewBox="0 0 360 340" role="img" aria-labelledby="loop-t loop-d"><title id="loop-t">The build loop</title><desc id="loop-d">Five steps in a circle: 1 Understand, 2 Design the smallest useful piece, 3 Build and test, 4 Observe, 5 Decide what changes, then back to Understand.</desc>
+<defs><marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--c-accent)"/></marker></defs>
+<path d="M228.0,62.2 A118,118 0 0 1 267.7,91.0" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M297.4,182.3 A118,118 0 0 1 282.2,229.0" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M204.5,285.4 A118,118 0 0 1 155.5,285.4" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M77.8,229.0 A118,118 0 0 1 62.6,182.3" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M92.3,91.0 A118,118 0 0 1 132.0,62.2" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<g class="cy-node"><rect x="124.0" y="31.0" width="112" height="42" rx="21"/><text x="180.0" y="57.0" text-anchor="middle"><tspan class="cy-n">1</tspan> Understand</text></g>
+<g class="cy-node on"><rect x="236.2" y="112.5" width="112" height="42" rx="21"/><text x="292.2" y="138.5" text-anchor="middle"><tspan class="cy-n">2</tspan> Design</text></g>
+<g class="cy-node"><rect x="193.4" y="244.5" width="112" height="42" rx="21"/><text x="249.4" y="270.5" text-anchor="middle"><tspan class="cy-n">3</tspan> Build &amp; test</text></g>
+<g class="cy-node"><rect x="54.6" y="244.5" width="112" height="42" rx="21"/><text x="110.6" y="270.5" text-anchor="middle"><tspan class="cy-n">4</tspan> Observe</text></g>
+<g class="cy-node"><rect x="11.8" y="112.5" width="112" height="42" rx="21"/><text x="67.8" y="138.5" text-anchor="middle"><tspan class="cy-n">5</tspan> Decide</text></g>
+<text x="180" y="166" text-anchor="middle" class="cy-mid">The build</text><text x="180" y="188" text-anchor="middle" class="cy-mid">loop</text></svg>
+<figcaption>The build loop from Chapter 1. This chapter highlights step 2, Design: turning your plan into small, clear jobs you can hand to AI helpers, and planning how you'll check what comes back.</figcaption>
+</figure>
+
+<h2>A real moment: the fix that didn't pass review</h2>
+<div class="story">
+  <span class="callout-label">From the ALC live-class build</span>
+  <p>While building the live-class tool, I used a small team of AI helpers. One wrote the changes. Another, a <strong>reviewer bot</strong>, checked every change before it was allowed into the real tool.</p>
+  <p>One day the job was to fix the whiteboard (the part where students draw during class). The ink wasn't behaving properly.</p>
+  <ol class="flow" aria-label="What happened">
+    <li>AI writes a fix<small>looks fine on its own</small></li>
+    <li class="bad">Reviewer bot checks<small>breaks 24 existing checks, extra server load</small></li>
+    <li>Fails review<small>reworked</small></li>
+    <li class="good">Back within the hour</li>
+  </ol>
+</div>
+<div class="callout key">
+  <span class="callout-label">Key idea</span>
+  <p>Nobody had to untangle the whole app, because the job was <strong>one small, bounded task</strong>, and <strong>someone checked it before it went live</strong>. Those two habits are what this chapter is about.</p>
+</div>
+<p class="small"><em>Note: the stories in this chapter come from the ALC live-class build. The general advice is backed by the researchers and expert sources listed in References at the end.</em></p>
+
+<h2>What you need</h2>
+<ul class="checklist">
+  <li>A free AI chat assistant. Several popular assistants, such as ChatGPT, Google Gemini and Claude, have offered free versions, but plans change often, so check before class.</li>
+  <li>A free notes app or Google Doc for your "team notes."</li>
+</ul>
+<div class="callout warn">
+  <span class="callout-label">Check the age rules and get school approval</span>
+  <p>Some AI assistants are for adults only, and some plans have age limits. Read each tool's age rules, and use only a tool your school has approved (see Chapter 4).</p>
+</div>
+
+<h2 id="s21"><span class="sec-num">2.1</span>Give one job at a time</h2>
+<p>AI helpers do their best work on a task with clear edges.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>A job</th><th>Not a job</th></tr></thead>
+  <tbody><tr><td class="good">"Fix the whiteboard ink"</td><td class="bad">"Make the app better"</td></tr></tbody>
+</table></div>
+<p>In my project the rule was simple: <strong>one ticket, one change</strong>. Each change answered exactly one ticket, so if a change broke something, we knew exactly which job caused it.</p>
+<span class="term"><b>Ticket:</b> just a note that describes one job.</span>
+<p>A good job description for an AI helper has three parts. You already know them from Chapter 1:</p>
+<ol class="steps">
+  <li><strong>What to do</strong> ("Show the question in bigger text on the projector screen.")</li>
+  <li><strong>What not to touch</strong> ("Don't change the phone screens.")</li>
+  <li><strong>How we'll check it</strong> ("I can read the question from the back of the room.")</li>
+</ol>
+<div class="callout">
+  <span class="callout-label">Rule of thumb</span>
+  <p>If you can't write those three lines, the job is too big. Split it. Wharton professor Ethan Mollick, who studies how people work with AI, says the same: the AI is like someone new on the job, so be very clear about exactly what you want (Mollick, 2024). AI researcher Andrej Karpathy says he works with AI in small chunks, checking each one before moving on (Y Combinator, 2025).</p>
+</div>
+
+<h2 id="s22"><span class="sec-num">2.2</span>Give context, not just commands</h2>
+<p>Imagine a new classmate joins your group project halfway through. If you just say "do the slides," they'll guess. If you say "we're presenting to Grade 9s, we have 5 minutes, and the teacher hates walls of text," they'll do much better.</p>
+<p>AI helpers are the same. They only know what you tell them, so tell them:</p>
+<ul class="checklist">
+  <li><strong>Who it's for</strong> (your one-sentence person and need)</li>
+  <li><strong>What already exists</strong> ("There's already a page where students type a class code.")</li>
+  <li><strong>Your never-break list</strong> ("Student information must stay private.")</li>
+</ul>
+<div class="story">
+  <span class="callout-label">Real example: make the AI ask first</span>
+  <p>When I first set AI helpers loose on the live-class tool, my notes did <em>not</em> hand them a finished plan. They told the AI to <strong>stop and ask me four questions first</strong>, then wait for a yes before building anything:</p>
+  <ol class="steps">
+    <li>Which pages are needed?</li><li>How do students sign in?</li><li>How does it fit with the live game?</li><li>Where do the lessons come from?</li>
+  </ol>
+</div>
+<div class="callout key">
+  <span class="callout-label">Key idea</span>
+  <p>That's a manager move: instead of letting the AI guess, make it ask. Mollick suggests the same: ask the AI to ask you questions about anything that is unclear, because working with AI is "a dialogue, not an order" (Mollick, 2024).</p>
+</div>
+
+<h2 id="s23"><span class="sec-num">2.3</span>Spot when the AI misunderstood</h2>
+<p>AI helpers rarely say "I'm confused." They just build <em>something</em>. Your job is to notice when that something isn't what you meant.</p>
+<div class="story">
+  <span class="callout-label">What went wrong: the Celebrations board</span>
+  <ol class="flow" aria-label="Celebrations board timeline">
+    <li>Ask for a "Celebrations" board<small>no data source, no "no results yet" case</small></li>
+    <li class="bad">Four award cards go up empty<small>Award, Most Engaged, Most Improved, Quietly Cooking</small></li>
+    <li>Same day: replaced by "Coming soon"</li>
+    <li class="bad">Summary claims a sparkle<small>it wasn't there</small></li>
+    <li class="good">A fourth change adds it</li>
+  </ol>
+</div>
+<p>Two lessons came out of that:</p>
+<ol class="steps">
+  <li><strong>Say what the feature shows, who sees it, and what happens when there's no information yet.</strong></li>
+  <li><strong>Check the thing itself, not the AI's description of it.</strong> An AI's summary of its own work is a claim, not proof. AI tools can state wrong things with total confidence; the US standards agency NIST calls this <em>confabulation</em> (National Institute of Standards and Technology [NIST], 2024). And in a Stanford study, people using an AI coding helper wrote less secure code, yet were more likely to believe it was secure (Perry et al., 2023).</li>
+</ol>
+<div class="callout warn">
+  <span class="callout-label">Warning signs the AI misunderstood</span>
+  <ul>
+    <li>It built more than you asked for.</li>
+    <li>It "improved" something you didn't mention.</li>
+    <li>Its summary sounds great, but you can't find the feature when you look.</li>
+    <li>It never asked a question about something you left unclear.</li>
+  </ul>
+</div>
+
+<h2 id="s24"><span class="sec-num">2.4</span>Use roles: builder and reviewer</h2>
+<p>In a good team, the person who does the work isn't the only person who checks it. In my project, every change got a review from a separate reviewer bot before it could go live. That's how the whiteboard fix got caught. You can copy this with free tools by opening <strong>two separate chats</strong>:</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Chat</th><th>What you paste</th></tr></thead>
+  <tbody>
+    <tr><td><strong>1 · Builder</strong></td><td>"Here's my spec. Build it."</td></tr>
+    <tr><td><strong>2 · Reviewer</strong></td><td>"Here's my spec and here's what was built. List anything that doesn't match the spec, and anything that could break."</td></tr>
+  </tbody>
+</table></div>
+<p>The reviewer starts fresh, so it isn't attached to the builder's choices. It won't catch everything, but it catches more than nobody does. Research backs this up. When an AI rechecks its own reasoning with no outside feedback, it often doesn't improve, and sometimes gets worse (Huang et al., 2024). When several separate AI chats critique each other's answers, the answers tend to get more accurate (Du et al., 2024).</p>
+
+<h2 id="s25"><span class="sec-num">2.5</span>Work in parallel without stepping on toes</h2>
+<p>Once you have more than one helper, they can bump into each other. In my project I once had three bots all updating the same task list at the same time. They kept editing the same items and undoing each other's work.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Bot</th><th>Its one area</th></tr></thead>
+  <tbody>
+    <tr><td>Bot 1</td><td>Updated task statuses</td></tr>
+    <tr><td>Bot 2</td><td>Added links to changes</td></tr>
+    <tr><td>Bot 3</td><td>Wrote a weekly clean-up report that I approved line by line</td></tr>
+  </tbody>
+</table></div>
+<p class="small">You'll see this story in full in Chapter 5.</p>
+<div class="callout">
+  <span class="callout-label">Rules for parallel work</span>
+  <ul>
+    <li><strong>One owner per area.</strong> Two helpers should never edit the same thing.</li>
+    <li><strong>Share the same notes.</strong> If both helpers get the same spec and never-break list, they make the same assumptions.</li>
+    <li><strong>Combine, then check.</strong> When two pieces come together, test them together.</li>
+  </ul>
+</div>
+
+<h2 id="s26"><span class="sec-num">2.6</span>A prompt template you can reuse</h2>
+<p><dfn>Prompt</dfn>: the message you give an AI. Sections 2.1 and 2.2 told you <em>what</em> to include; here it is as a fill-in template. Mollick's advice for everyday prompting covers many of the same parts: say exactly what you want, give the background, give examples, and invite the AI to ask questions (Mollick, 2024).</p>
+<h3>The six-line template</h3>
+<ol class="steps">
+  <li><strong>Goal:</strong> What do you want, and why? ("I want a flashcard page so I can study French vocab on my phone.")</li>
+  <li><strong>Context:</strong> Who it's for and what already exists. ("It's just for me. I have a list of 40 words in a Google Doc.")</li>
+  <li><strong>Limits:</strong> What it must not do. ("Free tools only. No sign-in. Don't collect any personal information.")</li>
+  <li><strong>Done looks like:</strong> How you'll check it. ("I can flip a card with one tap and see the next word.")</li>
+  <li><strong>Format:</strong> What you want back. ("One page I can preview. Then a three-line summary of what you built.")</li>
+  <li><strong>Ask first:</strong> "Before you start, ask me up to three questions about anything unclear. Wait for my answers."</li>
+</ol>
+<p>Keep the template in your team notes, so you never start from a blank box.</p>
+<h3>Bad vs good</h3>
+<p class="prompt bad"><b>Bad</b>"Make me a study app."</p>
+<p>The AI has to guess everything: what subject, what device, what "study" means. It will build <em>something</em>, and you'll spend longer fixing it than you would have spent explaining.</p>
+<p class="prompt good"><b>Good</b>"Goal: a flashcard page for 40 French words so I can study on my phone. Context: just for me; the words are pasted below. Limits: free, no sign-in, no personal info. Done looks like: one tap flips a card, a second tap shows the next one, and it works on a phone screen. Format: a page I can preview, then a short summary. Before you start, ask me up to three questions."</p>
+<div class="callout key">
+  <span class="callout-label">One example beats a long description</span>
+  <p>If you want a certain style, show one ("Make each card look like this: front = <em>le chat</em>, back = <em>the cat</em>"). Researchers found that adding a few examples to a prompt can greatly improve what an AI produces (Brown et al., 2020), and Mollick lists examples as one of the simplest ways to make a request clear (Mollick, 2024).</p>
+</div>
+<h3>Improve the prompt, don't throw it away</h3>
+<ol class="flow">
+  <li>Result is wrong</li><li>Find what went wrong</li><li>Fix <em>one</em> part<small>a limit, "done looks like", or an example</small></li><li class="good">Save the better version</li>
+</ol>
+<p>Researchers who watched beginners write prompts found that people tend to change things at random and draw big conclusions from a single try (Zamfirescu-Pereira et al., 2023). Changing one part at a time, then testing again, is how you actually learn what works. <strong>One exception:</strong> if a chat has gone back and forth with many corrections and keeps getting confused, open a <strong>fresh chat</strong> and paste in your improved prompt. A clean start with a better prompt usually beats a long, tangled chat. A long, tangled chat also buries your best instructions in the middle, where AI models are least likely to use them (Liu et al., 2024).</p>
+
+<h2 id="s27"><span class="sec-num">2.7</span>Standing rules: tell your AI once, not every time</h2>
+<p>AI helpers don't remember you between chats. Every new chat starts from zero. Mollick describes AI as a new coworker "who forgets everything you tell them each new conversation" (Mollick, 2024). If you keep typing "use simple words" or "don't touch the login page," you are repeating yourself, and one day you'll forget.</p>
+<p>The fix is a <dfn>rules file</dfn>: a short note of standing instructions the AI reads at the start of every session. Many coding tools can read a file like this automatically. Chat assistants usually have a similar setting for custom instructions, though where it lives changes often, so look for it in your assistant's settings.</p>
+<h3>What goes in a rules file</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Part</th><th>Example</th></tr></thead>
+  <tbody>
+    <tr><td><strong>The one job</strong></td><td>"You build and fix pages in this flashcard project."</td></tr>
+    <tr><td><strong>Anti-jobs</strong> (must never do)</td><td>"Never delete my word list. Never add sign-in. Never collect personal information."</td></tr>
+    <tr><td><strong>How to check</strong></td><td>"After any change, tell me exactly what to click to test it."</td></tr>
+    <tr><td><strong>House style</strong></td><td>"Explain things in plain words. Keep changes small."</td></tr>
+  </tbody>
+</table></div>
+<div class="callout">
+  <span class="callout-label">Keep it short</span>
+  <p>Long rules files can backfire. Researchers found that AI models are worst at using information buried in the middle of a long input (Liu et al., 2024), so an important line can get lost. For each line, ask: "Would my AI make a mistake without this?" If not, cut it. Write each rule as one clear instruction, not a vague wish. And remember that rules are strong suggestions, not locks, so you still check the result.</p>
+</div>
+<h3>Why rules beat repeating yourself</h3>
+<ul>
+  <li>You can't forget to say it.</li>
+  <li>Every helper gets the same instructions, so they make the same assumptions (remember 2.5).</li>
+  <li>When the AI makes a mistake, you add one line to the rules, and that mistake is less likely next time.</li>
+</ul>
+<div class="story">
+  <span class="callout-label">One job per helper, and a reviewer for each</span>
+  <p>In the ALC build, each bot had one job and standing rules about what it was <em>not</em> allowed to do. One bot wrote changes, and a separate reviewer bot checked every change before it went live (that's how the whiteboard fix was caught). When three bots all edited the same task list, each got a single job: one updated statuses, one added links, and one only <em>suggested</em> clean-ups for a human to approve. That last bot's anti-job was "never change a ticket yourself." Karpathy calls this keeping the AI "on the leash": small jobs you can check, instead of huge changes you can't (Y Combinator, 2025).</p>
+</div>
+<details>
+  <summary>See what a rules file looks like <span class="opt">(optional, you can skip this)</span></summary>
+  <div>
+<pre>You build and fix pages in this flashcard project.
+Never delete my word list. Never add sign-in. Never collect personal information.
+After any change, tell me exactly what to click to test it.
+Explain things in plain words. Keep changes small.</pre>
+  <p class="small">These are the four example lines from the table above, put together.</p>
+  </div>
+</details>
+<div class="callout key">
+  <span class="callout-label">Try it · 10 minutes</span>
+  <p>Write a five-line rules note for your project: one job, two anti-jobs, how to check, and one style rule. Paste it at the top of your next chat, or into your assistant's custom instructions setting.</p>
+</div>
+<p><strong>Which AI tool for which job?</strong> See the short <a href="ch2-5.html">Chapter 2.5 appendix</a> for a decision table, and for how to use a second AI as a critic.</p>
+
+<h2>What you must check yourself</h2>
+<p>The AI and the reviewer bot help, but some things stay with you:</p>
+<ul class="checklist">
+  <li><strong>Does it meet the need?</strong> Only you know what the person actually wanted.</li>
+  <li><strong>Does it touch your never-break list?</strong> Check this every time.</li>
+  <li><strong>Does it actually work when you use it?</strong> Click it. Try it. Don't trust the summary.</li>
+</ul>
+
+<h2 id="try">Try it: run a two-person AI team</h2>
+<p class="small">Free AI chat · about 30 minutes</p>
+<ol class="steps">
+  <li>Take the three-line spec you wrote in Chapter 1 (or write a new one for a small idea, like a flashcard page).</li>
+  <li>Add a <strong>context note</strong>: who it's for, what already exists, and your never-break list.</li>
+  <li>Add this line: <em>"Before you build, ask me up to three questions about anything unclear. Wait for my answers."</em></li>
+  <li>Open <strong>Chat 1 (builder)</strong>. Paste everything in. Answer its questions. Let it build. Many free assistants can show a working preview of a simple page. If yours can't, ask it to describe exactly what the page will show.</li>
+  <li>Open <strong>Chat 2 (reviewer)</strong>. Paste your spec and the builder's result. Ask: <em>"What doesn't match the spec? What could break?"</em></li>
+  <li>Now check it yourself. Write down one thing the reviewer caught and one thing <strong>you</strong> caught that it missed.</li>
+</ol>
+<div class="callout">
+  <span class="callout-label">Hand-in</span>
+  <ul class="checklist">
+    <li>Your spec</li><li>The questions the builder asked</li><li>The reviewer's list</li><li>Your own two notes</li>
+  </ul>
+</div>
+
+<h2>Chapter recap</h2>
+<ul>
+  <li>Give AI one bounded job at a time: what to do, what not to touch, how to check.</li>
+  <li>Give context: who it's for, what exists, what can never break.</li>
+  <li>Make the AI ask before it guesses.</li>
+  <li>Check the actual result, not the AI's description of it.</li>
+  <li>Separate the builder from the reviewer.</li>
+  <li>One owner per area when helpers work in parallel.</li>
+  <li>Use the six-line prompt template, and improve the prompt instead of starting from nothing.</li>
+  <li>Put standing instructions in a short rules file: one job, anti-jobs, how to check.</li>
+</ul>
+<a class="next" href="ch3.html">Next up, Chapter 3: Build, test and debug →</a>
+
+<aside class="teacher" aria-label="Teacher box">
+  <span class="callout-label">Teacher box</span>
+  <h3>Timing</h3>
+  <p>About 3 lessons: two of 60-75 minutes, plus an optional third of 45 minutes. Lesson 1: opener, 2.1-2.3, and writing the context note. Lesson 2: 2.4-2.5 and the two-chat exercise. Lesson 3 (optional): 2.6-2.7 (prompt template, rules note) and the Chapter 2.5 appendix.</p>
+  <h3>Common sticking points</h3>
+  <ul>
+    <li>Students paste a whole app idea as one job. Ask: "Can you write how you'd check it in one line?" If not, it's too big.</li>
+    <li>Students accept the AI's summary as proof. Make them demonstrate the feature live to a partner.</li>
+    <li>Free tiers have message limits. Have students save their spec in a Google Doc so they can restart a chat without retyping.</li>
+    <li>Some free assistants can't show a preview. A described result is fine for this exercise; the reviewing step is the point.</li>
+  </ul>
+  <h3>How to assess</h3>
+  <ul class="checklist">
+    <li>Is the job bounded (does, doesn't, how to check)?</li>
+    <li>Did the context note include person, existing parts and never-break list?</li>
+    <li>Did the student find at least one issue themselves, beyond what the reviewer chat found?</li>
+    <li>Quick exit ticket: "Name one sign the AI misunderstood you."</li>
+    <li>Does the student's prompt have all six template parts? Does their rules note have one job and at least two anti-jobs?</li>
+  </ul>
+</aside>
+
+<section class="references" aria-labelledby="refs">
+<h2 id="refs">References</h2>
+<ul>
+<li>Brown, T., Mann, B., Ryder, N., Subbiah, M., Kaplan, J. D., Dhariwal, P., Neelakantan, A., Shyam, P., Sastry, G., Askell, A., Agarwal, S., Herbert-Voss, A., Krueger, G., Henighan, T., Child, R., Ramesh, A., Ziegler, D., Wu, J., Winter, C., . . . Amodei, D. (2020). Language models are few-shot learners. In <em>Advances in Neural Information Processing Systems</em> (Vol. 33, pp. 1877–1901). Curran Associates. https://proceedings.neurips.cc/paper/2020/hash/1457c0d6bfcb4967418bfb8ac142f64a-Abstract.html</li>
+<li>Du, Y., Li, S., Torralba, A., Tenenbaum, J. B., &amp; Mordatch, I. (2024). Improving factuality and reasoning in language models through multiagent debate. In <em>Proceedings of the 41st International Conference on Machine Learning</em> (Vol. 235, pp. 11733–11763). PMLR. https://proceedings.mlr.press/v235/du24e.html</li>
+<li>Huang, J., Chen, X., Mishra, S., Zheng, H. S., Yu, A. W., Song, X., &amp; Zhou, D. (2024). Large language models cannot self-correct reasoning yet. In <em>The Twelfth International Conference on Learning Representations (ICLR 2024)</em>. https://proceedings.iclr.cc/paper_files/paper/2024/hash/8b4add8b0aa8749d80a34ca5d941c355-Abstract-Conference.html</li>
+<li>Liu, N. F., Lin, K., Hewitt, J., Paranjape, A., Bevilacqua, M., Petroni, F., &amp; Liang, P. (2024). Lost in the middle: How language models use long contexts. <em>Transactions of the Association for Computational Linguistics, 12</em>, 157–173. https://doi.org/10.1162/tacl_a_00638</li>
+<li>Mollick, E. (2024, November 24). <em>Getting started with AI: Good enough prompting</em>. One Useful Thing. https://www.oneusefulthing.org/p/getting-started-with-ai-good-enough</li>
+<li>National Institute of Standards and Technology. (2024). <em>Artificial intelligence risk management framework: Generative artificial intelligence profile</em> (NIST AI 600-1). U.S. Department of Commerce. https://doi.org/10.6028/NIST.AI.600-1</li>
+<li>Perry, N., Srivastava, M., Kumar, D., &amp; Boneh, D. (2023). Do users write more insecure code with AI assistants? In <em>Proceedings of the 2023 ACM SIGSAC Conference on Computer and Communications Security</em> (pp. 2785–2799). Association for Computing Machinery. https://doi.org/10.1145/3576915.3623157</li>
+<li>Y Combinator. (2025, June 18). <em>Andrej Karpathy: Software is changing (again)</em> [Video]. YouTube. https://www.youtube.com/watch?v=LCEmiRjPEtQ</li>
+<li>Zamfirescu-Pereira, J. D., Wong, R. Y., Hartmann, B., &amp; Yang, Q. (2023). Why Johnny can't prompt: How non-AI experts try (and fail) to design LLM prompts. In <em>Proceedings of the 2023 CHI Conference on Human Factors in Computing Systems</em> (Article 437). Association for Computing Machinery. https://doi.org/10.1145/3544548.3581388</li>
+</ul>
+<p class="note">Case-study facts (whiteboard fix, Celebrations board, three bots on one task list, bot roles) come from the ALC live-class build, October 2026, and are not from these sources.</p>
+</section>
+
+</main></body></html>

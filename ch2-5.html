@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 2.5 (Appendix): Which AI Tool for Which Job?</title><link rel="stylesheet" href="guide.css"></head>
+<body><main class="page">
+<p class="draft">DRAFT - pending Wonder wording pass, ELC student-data check and Shawn approval</p>
+
+<header class="ch-header">
+  <span class="ch-kicker">Chapter 2.5 · Appendix</span>
+  <h1>Which AI Tool for Which Job?</h1>
+  <p class="lead">There are three kinds of AI tool you'll hear about. They overlap, and the names change every few months, so learn the <strong>kinds</strong>, not the brand names.</p>
+  <section class="goals" aria-label="Learning goals">
+    <h2>By the end of this appendix you can</h2>
+    <ul>
+      <li>Tell a chat assistant, a coding agent and a bot platform apart.</li>
+      <li>Pick the simplest kind of tool that can do a job.</li>
+      <li>Use a second AI as a critic, while you stay the one who decides.</li>
+    </ul>
+  </section>
+</header>
+
+<h2>The three kinds</h2>
+<div class="table-wrap"><table>
+  <thead><tr><th>Kind</th><th>What it's for</th><th>What it does</th></tr></thead>
+  <tbody>
+    <tr><td><strong>1 · Chat assistant</strong><br><span class="small">e.g. ChatGPT, Grok, Google Gemini, Claude</span></td><td>Thinking, planning, explaining</td><td>You type, it answers. It doesn't change your project's files by itself; you copy things in and out.</td></tr>
+    <tr><td><strong>2 · Coding agent</strong><br><span class="small">e.g. Cursor, Google Antigravity</span></td><td>Changes to real files in your project</td><td>Opens your project folder, reads the files, makes changes, and can run checks.</td></tr>
+    <tr><td><strong>3 · Bot platform</strong><br><span class="small">e.g. Grok Bot (case study only)</span></td><td>Ongoing jobs and connected apps</td><td>Does a job on a schedule, connects to apps like email or a task list, and hands work between bots.</td></tr>
+  </tbody>
+</table></div>
+<p><strong>Chat assistants.</strong> Use one to brainstorm, write a spec, explain an error message, or review a plan. Several have offered free versions, but plans change often, so check before class.</p>
+<p><strong>Coding agents.</strong> Some have offered limited free plans; check before class. Because a coding agent can change real files, it needs clear rules (see 2.7) and undo history (Chapter 3).</p>
+<p><strong>Bot platforms.</strong> This is what runs the bot team in the ALC build. <strong>You don't need one for this course</strong>; it appears here as a case study only. Chapter 5 covers automation with free tools.</p>
+<div class="callout warn">
+  <span class="callout-label">Age rules and school approval</span>
+  <p>Some AI tools are for adults only, and some plans have age limits. Check your school's rules and each tool's age rules, and use only tools your school has approved (see Chapter 4).</p>
+</div>
+
+<h2>Decision table</h2>
+<div class="table-wrap"><table>
+  <thead><tr><th>If you want to...</th><th>Use...</th><th>Why</th></tr></thead>
+  <tbody>
+    <tr><td>Brainstorm, plan, or write a spec</td><td>Chat assistant</td><td>Fast back-and-forth; nothing real gets changed</td></tr>
+    <tr><td>Understand an error or a piece of code</td><td>Chat assistant</td><td>It explains in plain words</td></tr>
+    <tr><td>Get a second opinion on a plan</td><td>A <em>different</em> chat assistant</td><td>Fresh eyes catch blind spots</td></tr>
+    <tr><td>Build or fix pages in your actual project</td><td>Coding agent</td><td>It works on the real files and can run checks</td></tr>
+    <tr><td>Do the same job every week, or connect several apps</td><td>Bot platform (case study only)</td><td>It runs on its own schedule, under rules a human sets</td></tr>
+  </tbody>
+</table></div>
+<div class="callout key">
+  <span class="callout-label">Rule of thumb</span>
+  <p>Start with the simplest tool that can do the job. Move up only when you need to. AI researcher Andrej Karpathy describes an "autonomy slider": you choose how much independence to give an AI tool, depending on how hard the task is, and keep a person checking the work (Y Combinator, 2025).</p>
+</div>
+
+<h2>Should you pass a plan between several AIs?</h2>
+<p>I asked this myself while writing this guide. The honest answer: <strong>yes, once or twice, with a human in charge.</strong></p>
+<p><strong>Why it helps.</strong> A second AI hasn't seen the first one's reasoning, so it isn't attached to its choices. Researchers found that when several AI chats critique each other's answers over a few rounds, the answers tend to get more accurate (Du et al., 2024). Asking one AI to simply recheck its own work is weaker: without outside feedback, it often doesn't improve (Huang et al., 2024). It's the same idea as the builder and reviewer chats in 2.4.</p>
+<h3>How to do it well</h3>
+<ol class="steps">
+  <li><strong>One AI drafts.</strong> Use the six-line template from 2.6.</li>
+  <li><strong>A different AI critiques.</strong> Paste the draft and ask: "What's unclear, missing, or likely to go wrong? Rank your top five."</li>
+  <li><strong>You decide.</strong> Accept, change or reject each point. The AIs give advice; you're the one who knows the real need.</li>
+  <li><strong>Keep one source of truth.</strong> One plan document (a Google Doc works). Every accepted change goes into <em>that</em> doc, not into five versions in five chats.</li>
+</ol>
+<ol class="flow" aria-label="The critique loop">
+  <li>AI 1 drafts</li><li>AI 2 critiques</li><li class="good">You decide<small>accept or reject each point</small></li><li>One plan doc</li>
+</ol>
+<div class="callout warn">
+  <span class="callout-label">Avoid endless ping-pong</span>
+  <p>Each AI will always find <em>something</em> to change, and the plan can drift away from what you actually wanted. Stop after one or two rounds, or as soon as the feedback is just small wording changes.</p>
+</div>
+<div class="story">
+  <span class="callout-label">This guide did exactly that</span>
+  <p>The plan for this course went through two rounds of outside feedback. Each round was merged into one plan document, I decided which edits to accept, and the chapters were written from that one doc.</p>
+</div>
+
+<h2 id="try">Try it · 15 minutes</h2>
+<ol class="steps">
+  <li>Take your Chapter 1 spec. Ask one chat assistant to improve it.</li>
+  <li>Paste the result into a <em>different</em> assistant (or a fresh chat) and ask for the top five problems.</li>
+  <li>Pick which points you accept, and update your one plan doc.</li>
+</ol>
+<div class="callout">
+  <span class="callout-label">Hand-in</span>
+  <ul class="checklist"><li>The critique</li><li>One line per point: "accepted" or "rejected, because..."</li></ul>
+</div>
+<a class="next" href="ch3.html">Next up, Chapter 3: Build, test and debug →</a>
+
+<aside class="teacher" aria-label="Teacher box">
+  <span class="callout-label">Teacher box</span>
+  <h3>Timing</h3>
+  <p>30-45 minutes, or set as homework. It fits in the optional third lesson of Chapter 2.</p>
+  <h3>Common sticking points</h3>
+  <ul>
+    <li>Students treat the second AI as the judge. Remind them the human decides.</li>
+    <li>Some schools allow only one assistant. A fresh chat in the same assistant, given only the draft, is an acceptable stand-in.</li>
+  </ul>
+  <h3>How to assess</h3>
+  <ul class="checklist">
+    <li>Every accepted or rejected point has a reason.</li>
+    <li>There is one up-to-date plan doc.</li>
+  </ul>
+</aside>
+
+<section class="references" aria-labelledby="refs">
+<h2 id="refs">References</h2>
+<ul>
+<li>Du, Y., Li, S., Torralba, A., Tenenbaum, J. B., &amp; Mordatch, I. (2024). Improving factuality and reasoning in language models through multiagent debate. In <em>Proceedings of the 41st International Conference on Machine Learning</em> (Vol. 235, pp. 11733–11763). PMLR. https://proceedings.mlr.press/v235/du24e.html</li>
+<li>Huang, J., Chen, X., Mishra, S., Zheng, H. S., Yu, A. W., Song, X., &amp; Zhou, D. (2024). Large language models cannot self-correct reasoning yet. In <em>The Twelfth International Conference on Learning Representations (ICLR 2024)</em>. https://proceedings.iclr.cc/paper_files/paper/2024/hash/8b4add8b0aa8749d80a34ca5d941c355-Abstract-Conference.html</li>
+<li>Y Combinator. (2025, June 18). <em>Andrej Karpathy: Software is changing (again)</em> [Video]. YouTube. https://www.youtube.com/watch?v=LCEmiRjPEtQ</li>
+</ul>
+<p class="note">The bot-team setup and the two feedback rounds on this guide come from the ALC live-class build and course planning, October 2026.</p>
+</section>
+
+</main></body></html>

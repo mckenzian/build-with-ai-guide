@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chapter 4: Ship Safely</title><link rel="stylesheet" href="guide.css"></head>
+<body><main class="page">
+<p class="draft">DRAFT - pending Wonder wording pass, ELC student-data check and Shawn approval</p>
+
+<header class="ch-header">
+  <span class="ch-kicker">Chapter 4 · The release</span>
+  <h1>Ship Safely</h1>
+  <p class="lead">So far, everything you've built has lived with you. Shipping means real people use it. A bug you find while practising is a lesson. A bug that hits a real class is a problem for real people. This chapter is about the difference, and about the habits that protect users, especially when those users are students.</p>
+  <section class="goals" aria-label="Learning goals">
+    <h2>By the end of this chapter you can</h2>
+    <ul>
+      <li>Tell a practice bug from a live bug, and plan around the difference.</li>
+      <li>Explain why "no errors" doesn't mean "working."</li>
+      <li>Run a ready-for-users check before anything goes live.</li>
+      <li>Back up first, and make sure a fix is safe to run twice.</li>
+      <li>Keep people safe: personal information, passwords, keys and sharing.</li>
+    </ul>
+  </section>
+  <nav class="toc" aria-label="In this chapter"><ol>
+    <li><a href="#s41">Practice bug vs live bug</a></li><li><a href="#s42">"No errors" isn't "working"</a></li>
+    <li><a href="#s43">The ready-for-users check</a></li><li><a href="#s44">Backups and safe to run twice</a></li>
+    <li><a href="#s45">Keep people safe</a></li><li><a href="#try">Try it</a></li>
+  </ol></nav>
+</header>
+
+<figure class="cycle">
+<svg class="cycle-svg" viewBox="0 0 360 340" role="img" aria-labelledby="loop-t loop-d"><title id="loop-t">The build loop</title><desc id="loop-d">Five steps in a circle: 1 Understand, 2 Design the smallest useful piece, 3 Build and test, 4 Observe, 5 Decide what changes, then back to Understand.</desc>
+<defs><marker id="arw" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--c-accent)"/></marker></defs>
+<path d="M228.0,62.2 A118,118 0 0 1 267.7,91.0" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M297.4,182.3 A118,118 0 0 1 282.2,229.0" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M204.5,285.4 A118,118 0 0 1 155.5,285.4" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M77.8,229.0 A118,118 0 0 1 62.6,182.3" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<path d="M92.3,91.0 A118,118 0 0 1 132.0,62.2" fill="none" stroke="var(--c-accent)" stroke-width="2.5" marker-end="url(#arw)"/>
+<g class="cy-node"><rect x="124.0" y="31.0" width="112" height="42" rx="21"/><text x="180.0" y="57.0" text-anchor="middle"><tspan class="cy-n">1</tspan> Understand</text></g>
+<g class="cy-node"><rect x="236.2" y="112.5" width="112" height="42" rx="21"/><text x="292.2" y="138.5" text-anchor="middle"><tspan class="cy-n">2</tspan> Design</text></g>
+<g class="cy-node"><rect x="193.4" y="244.5" width="112" height="42" rx="21"/><text x="249.4" y="270.5" text-anchor="middle"><tspan class="cy-n">3</tspan> Build &amp; test</text></g>
+<g class="cy-node on"><rect x="54.6" y="244.5" width="112" height="42" rx="21"/><text x="110.6" y="270.5" text-anchor="middle"><tspan class="cy-n">4</tspan> Observe</text></g>
+<g class="cy-node"><rect x="11.8" y="112.5" width="112" height="42" rx="21"/><text x="67.8" y="138.5" text-anchor="middle"><tspan class="cy-n">5</tspan> Decide</text></g>
+<text x="180" y="166" text-anchor="middle" class="cy-mid">The build</text><text x="180" y="188" text-anchor="middle" class="cy-mid">loop</text></svg>
+<figcaption>The build loop. This chapter is about step 4, Observe: watching what really happens when real people use your tool, and only shipping when the checks pass.</figcaption>
+</figure>
+
+<p><strong>From here on, testing isn't optional.</strong> Nothing ships without passing its checks.</p>
+
+<h2>A real moment: the gate held</h2>
+<div class="story">
+  <span class="callout-label">From the ALC live-class build</span>
+  <p>One day a set of changes to my live-class tool was ready to go live, and there was pressure to get it out. My AI helper had an "approve" link ready, but it held that link back until a <strong>fresh backup</strong> was confirmed. A backup is a saved copy of all the tool's information, so you can get it back if something goes wrong.</p>
+  <p>Then the normal backup failed. It would have been easy to say "skip it, we're in a hurry." Instead, two other backups were made: a saved copy of the whole server disk, plus my own manual copy. Only then did the reviewer bot sign off.</p>
+  <ol class="flow" aria-label="The gate held">
+    <li>Ready to ship<small>approve link held back</small></li>
+    <li class="bad">Backup fails</li>
+    <li>Two other backups<small>disk copy + manual copy</small></li>
+    <li>Reviewer signs off</li>
+    <li class="good">Live at 2:28 PM<small>zero errors</small></li>
+  </ol>
+</div>
+<div class="callout key">
+  <span class="callout-label">Key idea</span>
+  <p><strong>Keep the safety gate, especially when you're in a hurry.</strong> Hurry is exactly when mistakes happen.</p>
+</div>
+
+<h2>What you need</h2>
+<ul class="checklist">
+  <li>A free Google Doc or Sheet for your ready-for-users checklist.</li>
+  <li>A free AI chat assistant.</li>
+  <li>Your project from Chapter 3.</li>
+</ul>
+
+<h2 id="s41"><span class="sec-num">4.1</span>Practice bug vs live bug</h2>
+<div class="table-wrap"><table>
+  <thead><tr><th>Practice bug</th><th>Live bug</th></tr></thead>
+  <tbody>
+    <tr><td class="good">Costs you a few minutes</td><td class="bad">Costs a whole room of people their time, and maybe their trust</td></tr>
+    <tr><td class="good">You fix it whenever you like</td><td class="bad">You fix it with people waiting</td></tr>
+  </tbody>
+</table></div>
+<p>That's why Chapter 1 put "working during a live class" on the never-break list, and why my rule is that only changes checked by 8 PM go out the night before a morning class. Before you ship, ask: <em>if this breaks, who is affected, and when?</em></p>
+<p>Getting something to work for yourself is often the easy part. AI researcher Andrej Karpathy described building a small app with AI in a few hours, then spending about another week making it real for other people: sign-in, payments, and putting it online (Y Combinator, 2025).</p>
+
+<h2 id="s42"><span class="sec-num">4.2</span>"No errors" doesn't mean "working"</h2>
+<p>An <dfn>error tracker</dfn> is a tool that records every time an app hits an error. When it's quiet, it's tempting to think everything is fine.</p>
+<div class="story">
+  <span class="callout-label">From the ALC live-class build: the slow class</span>
+  <p>On October 14, my live-class tool got very slow during a class, from about 2:40 PM. The error tracker showed no new errors, just one page that took 30 seconds to load. The cause was a setting that restarted the server's workers (the parts that answer students' clicks) every 4-5 minutes, and with a full class each restart took 2-3 minutes. The fix came with a one-hour practice run: about 30 pretend students in one class. Most clicks were fast and the workers never restarted, but there were still 33 errors and freezes of almost three minutes, so the fix was not accepted as done. A fresh run has to show zero errors and zero restarts before the next Friday-morning class; when I last checked, the second run had no result yet.</p>
+  <ol class="flow" aria-label="The slow class">
+    <li class="bad">Class is slow</li>
+    <li>Error tracker: no new errors</li>
+    <li>Cause: restart setting</li>
+    <li class="bad">Practice run: 33 errors</li>
+    <li>Not done yet<small>rerun must be clean</small></li>
+  </ol>
+</div>
+<p>Google's reliability engineers make the same point: an app can show no errors and still be too slow, so they watch speed and load as well as errors (Ewaschuk, 2016). Testing with lots of pretend users at once is called a <dfn>load test</dfn> (or stress test): it finds the point where a tool starts to struggle (Perry &amp; Luebbe, 2016).</p>
+<div class="callout">
+  <span class="callout-label">Rule of thumb</span>
+  <p>"No errors" only means "nothing crashed." It doesn't mean fast, correct or ready. Test with as many people as will really use it. If your tool is for a class of 30, try it on several devices, with friends using it at the same time.</p>
+</div>
+
+<h2 id="s43"><span class="sec-num">4.3</span>The ready-for-users check</h2>
+<p>Before anything goes live, run a short checklist. Here's a starter you can copy:</p>
+<ul class="checklist">
+  <li>It passes the "how you'll know it works" line from my spec.</li>
+  <li>I tested it like a troublemaker (Chapter 3), including "the second time."</li>
+  <li>I tested it with as many people as will really use it.</li>
+  <li>Nothing on my never-break list is at risk.</li>
+  <li>I have a saved copy of the last version that worked.</li>
+  <li>I have a backup of any information it stores.</li>
+  <li>Someone other than me has tried it.</li>
+  <li>There's time to fix it if it breaks before people need it.</li>
+</ul>
+<p>If any box is empty, it's not ready. That's not failure. That's the checklist doing its job.</p>
+
+<h2 id="s44"><span class="sec-num">4.4</span>Backups and "safe to run twice"</h2>
+<p>Two habits protect information.</p>
+<h3>1. Back up before you change anything</h3>
+<p>That's the opening story. If the backup doesn't work, you don't go ahead; you find another way to make one. And a backup only counts if you can get your information back from it. As Google's engineers put it, nobody really wants backups; what people want are restores (Blum &amp; Singh, 2016).</p>
+<h3>2. A fix you can't safely run twice isn't ready</h3>
+<div class="story">
+  <span class="callout-label">From the ALC live-class build</span>
+  <p>One fix was meant to fill in some missing gradebook information. But if it ran a second time, it added a <strong>duplicate column</strong> to the gradebook. Fixes sometimes get run twice by accident: a page refreshes, a button gets double-clicked, an app restarts.</p>
+</div>
+<p>A safe fix does the right thing every time it runs, not just the first time. That's the <em>idempotent</em> idea from Chapter 3 (Stripe, n.d.). You saw the same problem there, with the schedule step that put old class times back on every restart. In both cases, the question that catches it is: <em>what happens the second time?</em></p>
+
+<h2 id="s45"><span class="sec-num">4.5</span>Keep people safe: passwords, keys, personal information and publishing</h2>
+<p>When your tool touches real people, especially students, you're responsible for their safety. In my project, before building anything that touches student information, we <strong>review the impact on student data first</strong>: before the build, not after.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Rule</th><th>Why, and how</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Never paste personal information into an AI chat</strong></td><td>No real names, emails, grades or photos of classmates. Use stand-ins like "Student A" and "Class 1." (This whole guide follows that rule.) Security experts warn that what you type into an AI tool can leak (OWASP Gen AI Security Project, 2025). And Stanford researchers who studied six big AI companies' privacy policies found that all six appear to use people's chats to train their AI by default (King et al., 2025). School-managed accounts can have different settings, so ask your teacher.</td></tr>
+    <tr><td><strong>Never share passwords</strong></td><td>Not with an AI, not in a shared doc, not in a screenshot.</td></tr>
+    <tr><td><strong>Keep keys secret</strong></td><td>Some tools give you a "key": a long code that lets an app use your account. Treat it exactly like a password, and never paste it into code or a shared file (OWASP Foundation, n.d.). If an AI asks you to paste one into a page others can see, stop and ask your teacher.</td></tr>
+    <tr><td><strong>Think before you publish</strong></td><td>If you share a link, who can open it? In Google Docs, Sheets and Forms, check the <strong>Share</strong> settings: "Restricted" means only people you add can open it, while "Anyone with the link" means exactly that (Google, n.d.). Share only as widely as you need.</td></tr>
+    <tr><td><strong>Collect as little as possible</strong></td><td>If your tool doesn't need someone's name, don't ask for it. Canada's privacy commissioner says the same: collecting less information also reduces the risk if something leaks (Office of the Privacy Commissioner of Canada, n.d.). In Ontario schools, check that any online tool is approved by your school board first (Information and Privacy Commissioner of Ontario, n.d.).</td></tr>
+  </tbody>
+</table></div>
+<div class="callout">
+  <span class="callout-label">Coming up in Book 2</span>
+  <p>Some jobs are better done with you in the driver's seat, not handed off to an AI. A clear example is setting up <strong>sign-in with Google</strong> (often called OAuth), so people can log in to your app with an account they already have. That work touches passwords, keys and trust. An AI can explain the steps, but you should click the buttons, read the permission screens, and decide what to allow. Google's sign-in system shows people a consent screen listing what an app is asking for (Google, 2026). Book 2 will help you spot when a task needs your judgement.</p>
+</div>
+
+<h2>What you must check yourself</h2>
+<ul class="checklist">
+  <li><strong>Is every box on the ready-for-users check backed by evidence?</strong> Not just a tick.</li>
+  <li><strong>Did you run the important actions twice?</strong> And check the result both times.</li>
+  <li><strong>Is there any real personal information anywhere?</strong> In your tool, your test data, your AI chats and your share settings.</li>
+</ul>
+
+<h2 id="try">Try it: ship review</h2>
+<p class="small">Google Docs or Sheets, free AI chat · about 40 minutes</p>
+<ol class="steps">
+  <li>Copy the ready-for-users checklist from 4.3 into a Google Doc or Sheet.</li>
+  <li>Go through it for your Chapter 3 project. For each box, write how you checked it, or why it isn't done.</li>
+  <li><strong>Run-twice test:</strong> pick one action in your tool (submit, add points, save). Do it twice. Does it do the right thing both times?</li>
+  <li><strong>Crowd test:</strong> have 3 or more classmates use your tool at the same time. Note what happens.</li>
+  <li><strong>Safety scan:</strong> look at everything your tool asks for or shows. Is any of it personal? Could it use a stand-in instead? Check your share settings.</li>
+  <li>Write a one-line decision: <strong>"Ready to ship"</strong> or <strong>"Not yet, because..."</strong></li>
+</ol>
+<div class="callout">
+  <span class="callout-label">Hand-in</span>
+  <ul class="checklist"><li>Your completed checklist, with evidence</li><li>Your run-twice and crowd test results</li><li>Your decision</li></ul>
+</div>
+
+<h2>Chapter recap</h2>
+<ul>
+  <li>A practice bug is a lesson; a live bug hurts real people.</li>
+  <li>"No errors" doesn't mean "working." Test with real numbers of users.</li>
+  <li>Use a ready-for-users checklist every time.</li>
+  <li>Back up first. Keep the gate even when you're in a hurry.</li>
+  <li>A fix you can't safely run twice isn't ready.</li>
+  <li>Protect people: no personal information in AI chats, no shared passwords or keys, careful sharing.</li>
+</ul>
+<a class="next" href="ch5.html">Next up, Chapter 5: Automate one thing well →</a>
+
+<aside class="teacher" aria-label="Teacher box">
+  <span class="callout-label">Teacher box</span>
+  <h3>Timing</h3>
+  <p>2 lessons of 60-75 minutes. Lesson 1: opener, 4.1-4.3, start the checklist. Lesson 2: 4.4-4.5, the crowd test and the safety scan.</p>
+  <h3>Common sticking points</h3>
+  <ul>
+    <li>Students tick every box without evidence. Require a "how I checked" note per box.</li>
+    <li>"Not yet" feels like failure. Praise honest "not yet" decisions; that is the skill being taught.</li>
+    <li>Crowd tests need devices. Pair or group students; even 3 phones at once shows the idea.</li>
+    <li>Students may paste real classmate names into test data. Check early and redirect to stand-ins.</li>
+  </ul>
+  <h3>How to assess</h3>
+  <ul class="checklist">
+    <li>The checklist is completed with evidence, not just ticks.</li>
+    <li>The run-twice test was done and the result recorded.</li>
+    <li>The safety scan finds and fixes at least one personal-information or sharing risk (or explains why there are none).</li>
+    <li>The ship decision is justified by the checklist.</li>
+  </ul>
+</aside>
+
+<section class="references" aria-labelledby="refs">
+<h2 id="refs">References</h2>
+<ul>
+<li>Blum, R., &amp; Singh, R. (2016). Data integrity: What you read is what you wrote. In B. Beyer, C. Jones, J. Petoff, &amp; N. R. Murphy (Eds.), <em>Site reliability engineering: How Google runs production systems</em>. O'Reilly Media; Google. https://sre.google/sre-book/data-integrity/</li>
+<li>Ewaschuk, R. (2016). Monitoring distributed systems. In B. Beyer, C. Jones, J. Petoff, &amp; N. R. Murphy (Eds.), <em>Site reliability engineering: How Google runs production systems</em>. O'Reilly Media; Google. https://sre.google/sre-book/monitoring-distributed-systems/</li>
+<li>Google. (n.d.). <em>Share files from Google Drive</em> [Google Drive Help]. Retrieved October 15, 2026, from https://support.google.com/drive/answer/2494822</li>
+<li>Google. (2026, May 26). <em>Using OAuth 2.0 to access Google APIs</em>. Google for Developers. https://developers.google.com/identity/protocols/oauth2</li>
+<li>Information and Privacy Commissioner of Ontario. (n.d.). <em>Privacy in the networked classroom and the use of online educational services</em>. Retrieved October 15, 2026, from https://www.ipc.on.ca/en/education/special-topics/privacy-in-the-networked-classroom-and-the-use-of-online-educational-services</li>
+<li>King, J., Klyman, K., Capstick, E., Saade, T., &amp; Hsieh, V. (2025). User privacy and large language models: An analysis of frontier developers' privacy policies. <em>Proceedings of the AAAI/ACM Conference on AI, Ethics, and Society, 8</em>(2), 1465–1477. https://doi.org/10.1609/aies.v8i2.36646</li>
+<li>Office of the Privacy Commissioner of Canada. (n.d.). <em>PIPEDA fair information principle 4 – Limiting collection</em>. Retrieved October 15, 2026, from https://www.priv.gc.ca/en/privacy-topics/privacy-laws-in-canada/the-personal-information-protection-and-electronic-documents-act-pipeda/p_principle/principles/p_collection/</li>
+<li>OWASP Foundation. (n.d.). <em>Secrets management cheat sheet</em>. OWASP Cheat Sheet Series. Retrieved October 15, 2026, from https://cheatsheetseries.owasp.org/cheatsheets/Secrets_Management_Cheat_Sheet.html</li>
+<li>OWASP Gen AI Security Project. (2025). <em>LLM02:2025 Sensitive information disclosure</em>. https://genai.owasp.org/llmrisk/llm022025-sensitive-information-disclosure/</li>
+<li>Perry, A., &amp; Luebbe, M. (2016). Testing for reliability. In B. Beyer, C. Jones, J. Petoff, &amp; N. R. Murphy (Eds.), <em>Site reliability engineering: How Google runs production systems</em>. O'Reilly Media; Google. https://sre.google/sre-book/testing-reliability/</li>
+<li>Stripe. (n.d.). <em>Idempotent requests</em>. Stripe API Reference. Retrieved October 15, 2026, from https://docs.stripe.com/api/idempotent_requests</li>
+<li>Y Combinator. (2025, June 18). <em>Andrej Karpathy: Software is changing (again)</em> [Video]. YouTube. https://www.youtube.com/watch?v=LCEmiRjPEtQ</li>
+</ul>
+<p class="note">Case-study facts (the held approve link and backups, the October 14 slowdown and practice run, the duplicate gradebook column, the student-data review) come from the ALC live-class build, October 2026, and are not from these sources.</p>
+</section>
+
+</main></body></html>
